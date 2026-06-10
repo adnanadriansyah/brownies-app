@@ -32,7 +32,7 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       className={`${cormorant.variable} ${inter.variable} h-full`}
     >
-      <body className="min-h-full flex flex-col font-body bg-[#1a0f0a] text-[#a08070] antialiased">
+      <body className="min-h-full flex flex-col font-body bg-bg-primary text-text-body antialiased">
         <Providers>
           <Navbar />
           <main className="flex-1 flex flex-col">{children}</main>

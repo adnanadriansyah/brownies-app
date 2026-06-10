@@ -137,7 +137,7 @@ export default function OrderDetailPage() {
                 {item.product.imageUrl ? (
                   <Image src={item.product.imageUrl} alt={item.product.name} fill sizes="56px" className="object-cover" />
                 ) : (
-                  <div className="flex items-center justify-center h-full text-[9px] text-[#4a2218]">No Img</div>
+                  <div className="flex items-center justify-center h-full text-[9px] text-text-muted">No Img</div>
                 )}
               </div>
               <div className="flex-1">
@@ -182,7 +182,7 @@ export default function OrderDetailPage() {
                   className={`text-[9px] uppercase tracking-[1.5px] px-3 py-1.5 rounded-[2px] transition-all duration-200 ${
                     order.status === s
                    ? 'bg-rose text-white'
-                  : 'border-[0.5px] border-border/80 text-text-body hover:text-text-heading hover:border-[#c47a8a]/50'
+                  : 'border-[0.5px] border-border/80 text-text-body hover:text-text-heading hover:border-rose/50'
                   }`}
                 >
                   {s}

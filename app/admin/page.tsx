@@ -26,11 +26,11 @@ interface Review { id: string; rating: number; comment: string | null; createdAt
 type Tab = 'dashboard' | 'products' | 'orders' | 'categories' | 'reviews'
 
 const statusStyles: Record<string, string> = {
-  PENDING: 'bg-[rgba(196,122,138,0.2)] text-[#e8a0b0]',
-  PROCESSING: 'bg-[rgba(239,159,39,0.15)] text-[#fac775]',
-  SHIPPED: 'bg-[rgba(55,138,221,0.15)] text-[#85b7eb]',
-  DELIVERED: 'bg-[rgba(63,122,50,0.2)] text-[#8ec87a]',
-  CANCELLED: 'bg-[rgba(226,75,74,0.15)] text-[#f09595]',
+  PENDING: 'bg-[rgba(196,122,138,0.2)] text-text-rose',
+  PROCESSING: 'bg-[rgba(239,159,39,0.15)] text-warning',
+  SHIPPED: 'bg-[rgba(55,138,221,0.15)] text-info',
+  DELIVERED: 'bg-[rgba(63,122,50,0.2)] text-success',
+  CANCELLED: 'bg-[rgba(226,75,74,0.15)] text-danger',
 }
 
 const navItems: { key: Tab; label: string; icon: React.ReactNode }[] = [
@@ -109,9 +109,9 @@ export default function AdminPage() {
 
   const sidebar = (
     <div className="flex flex-col h-full">
-      <div className="p-5 border-b-[0.5px] border-[rgba(200,140,110,0.1)]">
-        <Link href="/admin" className="font-heading text-[#e8c4b0] text-base uppercase tracking-[3px]">Velours</Link>
-        <p className="text-[8px] text-[#604030] uppercase tracking-[2px] mt-1">Admin Panel</p>
+      <div className="p-5 border-b-[0.5px] border-white/10">
+        <Link href="/admin" className="font-heading text-text-heading text-base uppercase tracking-[3px]">Velours</Link>
+        <p className="text-[8px] text-text-muted uppercase tracking-[2px] mt-1">Admin Panel</p>
       </div>
       <nav className="flex-1 p-3 space-y-1">
         {navItems.map((item) => (
@@ -122,22 +122,22 @@ export default function AdminPage() {
             onClick={() => { setTab(item.key); setMobileSidebar(false) }}
             className={`w-full flex items-center gap-3 px-3 py-2.5 text-[11px] rounded-[2px] transition-all duration-200 ${
               tab === item.key
-                ? 'bg-[rgba(196,122,138,0.1)] text-[#e8a0b0] border-l-[2px] border-[#c47a8a]'
-                : 'text-[#604030] hover:text-[#a08070] hover:bg-white/[0.02] border-l-[2px] border-transparent'
+                ? 'bg-rose/10 text-text-rose border-l-[2px] border-rose'
+                : 'text-text-muted hover:text-text-body hover:bg-white/[0.02] border-l-[2px] border-transparent'
             }`}
           >
-            <span className={tab === item.key ? 'text-[#c47a8a]' : ''}>{item.icon}</span>
+            <span className={tab === item.key ? 'text-rose' : ''}>{item.icon}</span>
             {item.label}
           </motion.button>
         ))}
       </nav>
-      <div className="p-3 border-t-[0.5px] border-[rgba(200,140,110,0.1)] space-y-1">
-        <div className="px-3 py-2 text-[10px] text-[#4a2218] truncate">
+      <div className="p-3 border-t-[0.5px] border-white/10 space-y-1">
+        <div className="px-3 py-2 text-[10px] text-text-muted truncate">
           {session.user?.name || session.user?.email}
         </div>
         <button
           onClick={() => signOut()}
-          className="w-full flex items-center gap-3 px-3 py-2 text-[11px] text-[#604030] hover:text-[#f09595] transition-colors rounded-[2px] hover:bg-white/[0.02]"
+          className="w-full flex items-center gap-3 px-3 py-2 text-[11px] text-text-muted hover:text-danger transition-colors rounded-[2px] hover:bg-white/[0.02]"
         >
           <LogOut size={15} /> Keluar
         </button>
@@ -146,9 +146,9 @@ export default function AdminPage() {
   )
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-[#1a0f0a]">
+    <div className="flex min-h-[calc(100vh-4rem)] bg-bg-primary">
       {/* Desktop sidebar */}
-      <aside className="w-[220px] bg-[#150a06] border-r-[0.5px] border-[rgba(200,140,110,0.12)] shrink-0 hidden md:flex flex-col">
+      <aside className="w-[220px] bg-bg-sidebar border-r-[0.5px] border-border shrink-0 hidden md:flex flex-col">
         {sidebar}
       </aside>
 
@@ -172,7 +172,7 @@ export default function AdminPage() {
             animate={{ x: 0 }}
             exit={{ x: -260 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed left-0 top-0 bottom-0 w-[240px] bg-[#150a06] border-r border-[rgba(200,140,110,0.12)] z-50 md:hidden"
+            className="fixed left-0 top-0 bottom-0 w-[240px] bg-bg-sidebar border-r border-border z-50 md:hidden"
           >
             {sidebar}
           </motion.aside>
@@ -182,10 +182,10 @@ export default function AdminPage() {
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
-        <div className="h-14 border-b-[0.5px] border-[rgba(200,140,110,0.1)] flex items-center px-4 gap-3 bg-[#1a0f0a]">
+        <div className="h-14 border-b-[0.5px] border-border flex items-center px-4 gap-3 bg-bg-primary">
           <button
             onClick={() => setMobileSidebar(true)}
-            className="md:hidden text-[#a08070] hover:text-[#f0e0d6] transition-colors"
+            className="md:hidden text-text-body hover:text-text-heading transition-colors"
           >
             <Menu size={18} />
           </button>
@@ -194,7 +194,7 @@ export default function AdminPage() {
             whileHover={{ rotate: 180 }}
             transition={{ duration: 0.3 }}
             onClick={fetchData}
-            className="text-[#604030] hover:text-[#a08070] transition-colors"
+            className="text-text-muted hover:text-text-body transition-colors"
           >
             <RefreshCw size={14} />
           </motion.button>
@@ -215,10 +215,10 @@ export default function AdminPage() {
                 <div>
                   <div className="flex items-center justify-between mb-6">
                     <div>
-                      <h1 className="font-heading text-[#f0e0d6] text-2xl">Dashboard</h1>
-                      <p className="text-[11px] text-[#604030] mt-1">Overview bisnis Velours Brownies</p>
+                      <h1 className="font-heading text-text-heading text-2xl">Dashboard</h1>
+                      <p className="text-[11px] text-text-muted mt-1">Overview bisnis Velours Brownies</p>
                     </div>
-                    <span className="text-[10px] text-[#4a2218]">{new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                    <span className="text-[10px] text-text-muted">{new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
                   </div>
 
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
@@ -233,13 +233,13 @@ export default function AdminPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.08 }}
-                        className="bg-[#221010] border-[0.5px] border-[rgba(200,140,110,0.12)] rounded-[4px] p-4 card-hover"
+                        className="bg-bg-card border-[0.5px] border-border rounded-[4px] p-4 card-hover"
                       >
                         <div className="flex items-center justify-between mb-3">
-                          <p className="text-[9px] uppercase tracking-[1.5px] text-[#705050]">{stat.label}</p>
+                          <p className="text-[9px] uppercase tracking-[1.5px] text-text-muted">{stat.label}</p>
                           <span style={{ color: stat.color }}>{stat.icon}</span>
                         </div>
-                        <p className="text-[22px] text-[#e8c4b0] font-heading">{stat.value}</p>
+                        <p className="text-[22px] text-text-heading font-heading">{stat.value}</p>
                       </motion.div>
                     ))}
                   </div>
@@ -250,10 +250,10 @@ export default function AdminPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 }}
                     >
-                      <h2 className="font-heading text-[#f0e0d6] text-sm uppercase tracking-[2px] mb-3">Pesanan Terbaru</h2>
-                      <div className="bg-[#221010] border-[0.5px] border-[rgba(200,140,110,0.12)] rounded-[4px] divide-y-[0.5px] divide-[rgba(200,140,110,0.08)]">
+                      <h2 className="font-heading text-text-heading text-sm uppercase tracking-[2px] mb-3">Pesanan Terbaru</h2>
+                      <div className="bg-bg-card border-[0.5px] border-border rounded-[4px] divide-y-[0.5px] divide-[rgba(200,140,110,0.08)]">
                         {recentOrders.length === 0 && (
-                          <p className="text-[12px] text-[#705050] text-center py-8">Belum ada pesanan</p>
+                          <p className="text-[12px] text-text-muted text-center py-8">Belum ada pesanan</p>
                         )}
                         {recentOrders.map((o, i) => (
                           <motion.div
@@ -264,11 +264,11 @@ export default function AdminPage() {
                             className="flex items-center justify-between px-4 py-3 hover:bg-white/[0.02] transition-colors"
                           >
                             <div>
-                              <p className="text-[12px] text-[#f0e0d6]">{o.user.name}</p>
-                              <p className="text-[10px] text-[#604030]">#{o.id.slice(0, 6).toUpperCase()} &middot; {formatDate(o.createdAt)}</p>
+                              <p className="text-[12px] text-text-heading">{o.user.name}</p>
+                              <p className="text-[10px] text-text-muted">#{o.id.slice(0, 6).toUpperCase()} &middot; {formatDate(o.createdAt)}</p>
                             </div>
                             <div className="text-right">
-                              <p className="text-[12px] text-[#e8a0b0]">{formatRupiah(o.totalAmount)}</p>
+                              <p className="text-[12px] text-text-rose">{formatRupiah(o.totalAmount)}</p>
                               <span className={`text-[8px] uppercase tracking-[1px] px-2 py-0.5 rounded-[1px] ${statusStyles[o.status] || ''}`}>{o.status}</span>
                             </div>
                           </motion.div>
@@ -281,10 +281,10 @@ export default function AdminPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
                     >
-                      <h2 className="font-heading text-[#f0e0d6] text-sm uppercase tracking-[2px] mb-3">Stok Menipis</h2>
-                      <div className="bg-[#221010] border-[0.5px] border-[rgba(200,140,110,0.12)] rounded-[4px] divide-y-[0.5px] divide-[rgba(200,140,110,0.08)]">
+                      <h2 className="font-heading text-text-heading text-sm uppercase tracking-[2px] mb-3">Stok Menipis</h2>
+                      <div className="bg-bg-card border-[0.5px] border-border rounded-[4px] divide-y-[0.5px] divide-[rgba(200,140,110,0.08)]">
                         {lowStockProducts.length === 0 ? (
-                          <p className="text-[12px] text-[#705050] text-center py-8">Semua stok aman</p>
+                          <p className="text-[12px] text-text-muted text-center py-8">Semua stok aman</p>
                         ) : (
                           lowStockProducts.slice(0, 8).map((p, i) => (
                             <motion.div
@@ -295,13 +295,13 @@ export default function AdminPage() {
                               className="flex items-center justify-between px-4 py-3 hover:bg-white/[0.02] transition-colors"
                             >
                               <div className="flex items-center gap-3">
-                                <AlertTriangle size={12} className="text-[#fac775] shrink-0" />
+                                <AlertTriangle size={12} className="text-warning shrink-0" />
                                 <div>
-                                  <p className="text-[12px] text-[#f0e0d6]">{p.name}</p>
-                                  <p className="text-[10px] text-[#604030]">{p.category.name}</p>
+                                  <p className="text-[12px] text-text-heading">{p.name}</p>
+                                  <p className="text-[10px] text-text-muted">{p.category.name}</p>
                                 </div>
                               </div>
-                              <span className="text-[12px] text-[#f09595]">{p.stock}</span>
+                              <span className="text-[12px] text-danger">{p.stock}</span>
                             </motion.div>
                           ))
                         )}
@@ -316,8 +316,8 @@ export default function AdminPage() {
                 <div>
                   <div className="flex items-center justify-between mb-6">
                     <div>
-                      <h1 className="font-heading text-[#f0e0d6] text-2xl">Produk</h1>
-                      <p className="text-[11px] text-[#604030] mt-1">{products.length} total produk</p>
+                      <h1 className="font-heading text-text-heading text-2xl">Produk</h1>
+                      <p className="text-[11px] text-text-muted mt-1">{products.length} total produk</p>
                     </div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <Button size="sm" onClick={() => {
@@ -331,10 +331,10 @@ export default function AdminPage() {
                       </Button>
                     </motion.div>
                   </div>
-                  <div className="overflow-x-auto bg-[#221010] border-[0.5px] border-[rgba(200,140,110,0.12)] rounded-[4px]">
+                  <div className="overflow-x-auto bg-bg-card border-[0.5px] border-border rounded-[4px]">
                     <table className="w-full text-[11px]">
                       <thead>
-                        <tr className="border-b-[0.5px] border-[rgba(200,140,110,0.15)] text-[#705050] uppercase tracking-[1px]">
+                        <tr className="border-b-[0.5px] border-border text-text-muted uppercase tracking-[1px]">
                           <th className="text-left py-3 px-4"></th>
                           <th className="text-left py-3 pr-4">Nama</th>
                           <th className="text-left py-3 pr-4">Kategori</th>
@@ -351,23 +351,23 @@ export default function AdminPage() {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: i * 0.03 }}
-                            className={`border-b-[0.5px] border-[rgba(200,140,110,0.08)] transition-opacity duration-300 hover:bg-white/[0.02] ${!p.isActive ? 'opacity-50' : ''}`}
+                            className={`border-b-[0.5px] border-border transition-opacity duration-300 hover:bg-white/[0.02] ${!p.isActive ? 'opacity-50' : ''}`}
                           >
                             <td className="py-3 pl-4 pr-4">
-                              <div className="w-10 h-10 bg-[#261310] rounded-[2px] relative overflow-hidden">
+                              <div className="w-10 h-10 bg-bg-card rounded-[2px] relative overflow-hidden">
                                 {p.imageUrl && <Image src={p.imageUrl} alt="" fill sizes="40px" className="object-cover" />}
                               </div>
                             </td>
-                            <td className="py-3 pr-4 text-[#f0e0d6] font-medium">{p.name}</td>
-                            <td className="py-3 pr-4 text-[#705050]">{p.category.name}</td>
-                            <td className="py-3 pr-4 text-right text-[#e8a0b0]">{formatRupiah(p.price)}</td>
+                            <td className="py-3 pr-4 text-text-heading font-medium">{p.name}</td>
+                            <td className="py-3 pr-4 text-text-muted">{p.category.name}</td>
+                            <td className="py-3 pr-4 text-right text-text-rose">{formatRupiah(p.price)}</td>
                             <td className="py-3 pr-4 text-right">
-                              <span className={p.stock <= 10 ? 'text-[#f09595]' : 'text-[#a08070]'}>{p.stock}</span>
-                              {p.stock <= 10 && <span className="ml-1 text-[7px] text-[#fac775] uppercase tracking-[1px]">Rendah</span>}
+                              <span className={p.stock <= 10 ? 'text-danger' : 'text-text-body'}>{p.stock}</span>
+                              {p.stock <= 10 && <span className="ml-1 text-[7px] text-warning uppercase tracking-[1px]">Rendah</span>}
                             </td>
                             <td className="py-3 pr-4 text-center">
-                              {!p.isActive && <span className="text-[7px] uppercase tracking-[1px] text-[#f09595]">Nonaktif</span>}
-                              {p.isActive && <span className="text-[7px] uppercase tracking-[1px] text-[#8ec87a]">Aktif</span>}
+                              {!p.isActive && <span className="text-[7px] uppercase tracking-[1px] text-danger">Nonaktif</span>}
+                              {p.isActive && <span className="text-[7px] uppercase tracking-[1px] text-success">Aktif</span>}
                             </td>
                             <td className="py-3 pr-4 text-right">
                               <div className="flex items-center justify-end gap-1">
@@ -380,7 +380,7 @@ export default function AdminPage() {
                                     setProdCategory(p.category.id); setProdActive(p.isActive)
                                     setShowProductModal(true)
                                   }}
-                                  className="p-1.5 text-[#705050] hover:text-[#f0e0d6] transition-colors"
+                                  className="p-1.5 text-text-muted hover:text-text-heading transition-colors"
                                 >
                                   <Edit size={11} />
                                 </motion.button>
@@ -391,7 +391,7 @@ export default function AdminPage() {
                                       fetchData()
                                     }
                                   }}
-                                  className="p-1.5 text-[#705050] hover:text-[#f09595] transition-colors"
+                                  className="p-1.5 text-text-muted hover:text-danger transition-colors"
                                 >
                                   <Trash2 size={11} />
                                 </motion.button>
@@ -409,8 +409,8 @@ export default function AdminPage() {
               {tab === 'orders' && (
                 <div>
                   <div className="mb-6">
-                    <h1 className="font-heading text-[#f0e0d6] text-2xl">Pesanan</h1>
-                    <p className="text-[11px] text-[#604030] mt-1">{orders.length} total pesanan</p>
+                    <h1 className="font-heading text-text-heading text-2xl">Pesanan</h1>
+                    <p className="text-[11px] text-text-muted mt-1">{orders.length} total pesanan</p>
                   </div>
                   <div className="flex gap-2 mb-4 flex-wrap">
                     {['', 'PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'].map((s) => (
@@ -421,18 +421,18 @@ export default function AdminPage() {
                         onClick={() => setOrderFilter(s)}
                         className={`text-[9px] uppercase tracking-[1px] px-3 py-1.5 rounded-[2px] transition-all duration-200 ${
                           orderFilter === s
-                            ? 'bg-[#c47a8a] text-white shadow-lg shadow-[#c47a8a]/20'
-                            : 'border-[0.5px] border-[rgba(200,140,110,0.3)] text-[#a08070] hover:text-[#f0e0d6] hover:border-[#c47a8a]/50'
+                            ? 'bg-rose text-white shadow-lg shadow-[#c47a8a]/20'
+                            : 'border-[0.5px] border-border/80 text-text-body hover:text-text-heading hover:border-rose/50'
                         }`}
                       >
                         {s || 'Semua'}
                       </motion.button>
                     ))}
                   </div>
-                  <div className="overflow-x-auto bg-[#221010] border-[0.5px] border-[rgba(200,140,110,0.12)] rounded-[4px]">
+                  <div className="overflow-x-auto bg-bg-card border-[0.5px] border-border rounded-[4px]">
                     <table className="w-full text-[11px]">
                       <thead>
-                        <tr className="border-b-[0.5px] border-[rgba(200,140,110,0.15)] text-[#705050] uppercase tracking-[1px]">
+                        <tr className="border-b-[0.5px] border-border text-text-muted uppercase tracking-[1px]">
                           <th className="text-left py-3 px-4">Order ID</th>
                           <th className="text-left py-3 pr-4">Pelanggan</th>
                           <th className="text-right py-3 pr-4">Total</th>
@@ -448,17 +448,17 @@ export default function AdminPage() {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: i * 0.03 }}
-                            className="border-b-[0.5px] border-[rgba(200,140,110,0.08)] hover:bg-white/[0.02]"
+                            className="border-b-[0.5px] border-border hover:bg-white/[0.02]"
                           >
-                            <td className="py-3 pl-4 pr-4 text-[#c47a8a] font-mono font-medium">#ORD-{o.id.slice(0, 6).toUpperCase()}</td>
-                            <td className="py-3 pr-4 text-[#a08070]">{o.user.name}</td>
-                            <td className="py-3 pr-4 text-right text-[#e8a0b0]">{formatRupiah(o.totalAmount)}</td>
+                            <td className="py-3 pl-4 pr-4 text-rose font-mono font-medium">#ORD-{o.id.slice(0, 6).toUpperCase()}</td>
+                            <td className="py-3 pr-4 text-text-body">{o.user.name}</td>
+                            <td className="py-3 pr-4 text-right text-text-rose">{formatRupiah(o.totalAmount)}</td>
                             <td className="py-3 pr-4 text-center">
                               <span className={`text-[8px] uppercase tracking-[1px] px-2 py-0.5 rounded-[1px] ${statusStyles[o.status] || ''}`}>{o.status}</span>
                             </td>
-                            <td className="py-3 pr-4 text-[#705050]">{formatDate(o.createdAt)}</td>
+                            <td className="py-3 pr-4 text-text-muted">{formatDate(o.createdAt)}</td>
                             <td className="py-3 pr-4 text-right">
-                              <Link href={`/orders/${o.id}`} className="text-[9px] text-[#c47a8a] hover:text-[#e8a0b0] uppercase tracking-[1px] transition-colors">
+                              <Link href={`/orders/${o.id}`} className="text-[9px] text-rose hover:text-text-rose uppercase tracking-[1px] transition-colors">
                                 Detail
                               </Link>
                             </td>
@@ -475,8 +475,8 @@ export default function AdminPage() {
                 <div>
                   <div className="flex items-center justify-between mb-6">
                     <div>
-                      <h1 className="font-heading text-[#f0e0d6] text-2xl">Kategori</h1>
-                      <p className="text-[11px] text-[#604030] mt-1">{categories.length} kategori</p>
+                      <h1 className="font-heading text-text-heading text-2xl">Kategori</h1>
+                      <p className="text-[11px] text-text-muted mt-1">{categories.length} kategori</p>
                     </div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <Button size="sm" onClick={() => { setCatName(''); setCatSlug(''); setShowCatModal(true) }}>
@@ -489,12 +489,12 @@ export default function AdminPage() {
                       <StaggerItem key={cat.id}>
                         <Card className="p-4 flex items-center justify-between group">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-[#c47a8a]/10 flex items-center justify-center">
-                              <Tags size={12} className="text-[#c47a8a]" />
+                            <div className="w-8 h-8 rounded-full bg-rose/10 flex items-center justify-center">
+                              <Tags size={12} className="text-rose" />
                             </div>
                             <div>
-                              <p className="text-[13px] text-[#f0e0d6]">{cat.name}</p>
-                              <p className="text-[10px] text-[#705050]">{cat.slug} &middot; {cat._count.products} produk</p>
+                              <p className="text-[13px] text-text-heading">{cat.name}</p>
+                              <p className="text-[10px] text-text-muted">{cat.slug} &middot; {cat._count.products} produk</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -510,7 +510,7 @@ export default function AdminPage() {
                                   fetchData()
                                 }
                               }}
-                              className="text-[10px] text-[#a08070] hover:text-[#f0e0d6] transition-colors"
+                              className="text-[10px] text-text-body hover:text-text-heading transition-colors"
                             >
                               Edit
                             </motion.button>
@@ -520,7 +520,7 @@ export default function AdminPage() {
                                 await fetch(`/api/categories/${cat.id}`, { method: 'DELETE' })
                                 fetchData()
                               }}
-                              className="text-[#4a2218] hover:text-[#f09595] transition-colors"
+                              className="text-text-muted hover:text-danger transition-colors"
                             >
                               <Trash2 size={11} />
                             </motion.button>
@@ -536,8 +536,8 @@ export default function AdminPage() {
               {tab === 'reviews' && (
                 <div>
                   <div className="mb-6">
-                    <h1 className="font-heading text-[#f0e0d6] text-2xl">Ulasan</h1>
-                    <p className="text-[11px] text-[#604030] mt-1">{reviews.length} ulasan</p>
+                    <h1 className="font-heading text-text-heading text-2xl">Ulasan</h1>
+                    <p className="text-[11px] text-text-muted mt-1">{reviews.length} ulasan</p>
                   </div>
                   <div className="space-y-3">
                     {reviews.map((rev, i) => (
@@ -550,23 +550,23 @@ export default function AdminPage() {
                         <Card className="p-4 flex items-start justify-between gap-3 group">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1 flex-wrap">
-                              <span className="text-[12px] text-[#f0e0d6] font-medium">{rev.user.name}</span>
-                              <span className="text-[10px] text-[#705050]">pada {rev.product.name}</span>
-                              <span className="text-[9px] text-[#4a2218]">{formatDate(rev.createdAt)}</span>
+                              <span className="text-[12px] text-text-heading font-medium">{rev.user.name}</span>
+                              <span className="text-[10px] text-text-muted">pada {rev.product.name}</span>
+                              <span className="text-[9px] text-text-muted">{formatDate(rev.createdAt)}</span>
                             </div>
                             <div className="flex items-center gap-0.5 mb-1">
                               {Array.from({ length: 5 }).map((_, j) => (
-                                <span key={j} className={`text-[10px] ${j < rev.rating ? 'text-[#c47a8a]' : 'text-[#4a2218]'}`}>&#9733;</span>
+                                <span key={j} className={`text-[10px] ${j < rev.rating ? 'text-rose' : 'text-text-muted'}`}>&#9733;</span>
                               ))}
                             </div>
-                            {rev.comment && <p className="text-[11px] text-[#a08070]">{rev.comment}</p>}
+                            {rev.comment && <p className="text-[11px] text-text-body">{rev.comment}</p>}
                           </div>
                           <motion.button whileHover={{ scale: 1.1 }}
                             onClick={async () => {
                               await fetch(`/api/reviews/${rev.id}`, { method: 'DELETE' })
                               setAllData((prev) => ({ ...prev, reviews: prev.reviews.filter((r) => r.id !== rev.id) }))
                             }}
-                            className="text-[#4a2218] hover:text-[#f09595] transition-colors shrink-0 opacity-0 group-hover:opacity-100"
+                            className="text-text-muted hover:text-danger transition-colors shrink-0 opacity-0 group-hover:opacity-100"
                           >
                             <Trash2 size={12} />
                           </motion.button>
@@ -574,7 +574,7 @@ export default function AdminPage() {
                       </motion.div>
                     ))}
                     {reviews.length === 0 && (
-                      <p className="text-[#705050] text-[12px] text-center py-12">Belum ada ulasan</p>
+                      <p className="text-text-muted text-[12px] text-center py-12">Belum ada ulasan</p>
                     )}
                   </div>
                 </div>
@@ -588,45 +588,45 @@ export default function AdminPage() {
       <Modal open={showProductModal} onClose={() => setShowProductModal(false)} title={editingProduct ? 'Edit Produk' : 'Tambah Produk'}>
         <div className="space-y-4">
           <div>
-            <label className="text-[9px] uppercase tracking-[1.5px] text-[#705050] block mb-1">Nama</label>
+            <label className="text-[9px] uppercase tracking-[1.5px] text-text-muted block mb-1">Nama</label>
             <Input value={prodName} onChange={(e) => {
               setProdName(e.target.value)
               if (!editingProduct) setProdSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))
             }} />
           </div>
           <div>
-            <label className="text-[9px] uppercase tracking-[1.5px] text-[#705050] block mb-1">Slug</label>
+            <label className="text-[9px] uppercase tracking-[1.5px] text-text-muted block mb-1">Slug</label>
             <Input value={prodSlug} onChange={(e) => setProdSlug(e.target.value)} />
           </div>
           <div>
-            <label className="text-[9px] uppercase tracking-[1.5px] text-[#705050] block mb-1">Deskripsi</label>
+            <label className="text-[9px] uppercase tracking-[1.5px] text-text-muted block mb-1">Deskripsi</label>
             <textarea
               value={prodDesc}
               onChange={(e) => setProdDesc(e.target.value)}
               rows={3}
-              className="w-full bg-[#1a0f0a] border border-[rgba(200,140,110,0.2)] text-[#f0e0d6] placeholder-[#4a2218] focus:outline-none focus:border-[#c47a8a] focus:ring-1 focus:ring-[#c47a8a]/20 rounded-[2px] px-3 py-2 text-[13px] resize-none transition-all duration-300"
+              className="w-full bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-rose focus:ring-1 focus:ring-rose/20 rounded-[2px] px-3 py-2 text-[13px] resize-none transition-all duration-300"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-[9px] uppercase tracking-[1.5px] text-[#705050] block mb-1">Harga</label>
+              <label className="text-[9px] uppercase tracking-[1.5px] text-text-muted block mb-1">Harga</label>
               <Input type="number" value={prodPrice} onChange={(e) => setProdPrice(e.target.value)} />
             </div>
             <div>
-              <label className="text-[9px] uppercase tracking-[1.5px] text-[#705050] block mb-1">Stok</label>
+              <label className="text-[9px] uppercase tracking-[1.5px] text-text-muted block mb-1">Stok</label>
               <Input type="number" value={prodStock} onChange={(e) => setProdStock(e.target.value)} />
             </div>
           </div>
           <div>
-            <label className="text-[9px] uppercase tracking-[1.5px] text-[#705050] block mb-1">Gambar URL</label>
+            <label className="text-[9px] uppercase tracking-[1.5px] text-text-muted block mb-1">Gambar URL</label>
             <Input value={prodImage} onChange={(e) => setProdImage(e.target.value)} />
           </div>
           <div>
-            <label className="text-[9px] uppercase tracking-[1.5px] text-[#705050] block mb-1">Kategori</label>
+            <label className="text-[9px] uppercase tracking-[1.5px] text-text-muted block mb-1">Kategori</label>
             <select
               value={prodCategory}
               onChange={(e) => setProdCategory(e.target.value)}
-              className="w-full bg-[#1a0f0a] border border-[rgba(200,140,110,0.2)] text-[#f0e0d6] focus:outline-none focus:border-[#c47a8a] rounded-[2px] px-3 py-2 text-[13px] transition-all duration-300"
+              className="w-full bg-bg-primary border border-border/80 text-text-heading focus:outline-none focus:border-rose rounded-[2px] px-3 py-2 text-[13px] transition-all duration-300"
             >
               <option value="">Pilih kategori</option>
               {categories.map((c) => (
@@ -634,8 +634,8 @@ export default function AdminPage() {
               ))}
             </select>
           </div>
-          <label className="flex items-center gap-2 text-[11px] text-[#a08070] cursor-pointer">
-            <input type="checkbox" checked={prodActive} onChange={(e) => setProdActive(e.target.checked)} className="accent-[#c47a8a]" />
+          <label className="flex items-center gap-2 text-[11px] text-text-body cursor-pointer">
+            <input type="checkbox" checked={prodActive} onChange={(e) => setProdActive(e.target.checked)} className="accent-rose" />
             Produk Aktif
           </label>
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -672,11 +672,11 @@ export default function AdminPage() {
       <Modal open={showCatModal} onClose={() => setShowCatModal(false)} title="Tambah Kategori">
         <div className="space-y-4">
           <div>
-            <label className="text-[9px] uppercase tracking-[1.5px] text-[#705050] block mb-1">Nama</label>
+            <label className="text-[9px] uppercase tracking-[1.5px] text-text-muted block mb-1">Nama</label>
             <Input value={catName} onChange={(e) => { setCatName(e.target.value); setCatSlug(e.target.value.toLowerCase().replace(/\s+/g, '-')) }} />
           </div>
           <div>
-            <label className="text-[9px] uppercase tracking-[1.5px] text-[#705050] block mb-1">Slug</label>
+            <label className="text-[9px] uppercase tracking-[1.5px] text-text-muted block mb-1">Slug</label>
             <Input value={catSlug} onChange={(e) => setCatSlug(e.target.value)} />
           </div>
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>

@@ -54,7 +54,7 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45 }}
-              className="text-[13px] text-[#806050] leading-relaxed"
+              className="text-[13px] text-text-muted leading-relaxed"
             >
               Kini kami hadir dengan misi sederhana: menyebarkan kebahagiaan melalui brownies.
               Dari Jakarta ke seluruh Indonesia, setiap kotak Velours adalah bukti bahwa kebaikan
@@ -132,7 +132,7 @@ export default function AboutPage() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-rose text-white text-[11px] uppercase tracking-[2px] px-8 py-3 rounded-[2px] hover:bg-[#d48a9a] transition-colors"
+              className="bg-rose text-white text-[11px] uppercase tracking-[2px] px-8 py-3 rounded-[2px] hover:bg-rose/80 transition-colors"
             >
               Pesan Sekarang
             </motion.button>

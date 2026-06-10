@@ -13,9 +13,9 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<Variant, string> = {
   primary:
-    'btn-shine bg-rose text-white hover:bg-[#e8a0b0] uppercase tracking-widest text-[11px] rounded-[2px] transition-all duration-300 active:scale-[0.97]',
+    'btn-shine bg-rose text-white hover:bg-rose-hover uppercase tracking-widest text-[11px] rounded-[2px] transition-all duration-300 active:scale-[0.97]',
   outline:
-    'border-[0.5px] border-[#c47a8a] text-rose bg-transparent hover:bg-[#c47a8a]/10 hover:text-text-rose hover:border-[#e8a0b0] rounded-[2px] transition-all duration-300',
+    'border-[0.5px] border-rose text-rose bg-transparent hover:bg-rose/10 hover:text-text-rose hover:border-text-rose rounded-[2px] transition-all duration-300',
   ghost:
     'text-text-body hover:text-text-heading hover:bg-white/[0.04] rounded-[2px] transition-all duration-200',
 }

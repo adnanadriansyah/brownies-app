@@ -99,8 +99,8 @@ export default function BlogPage() {
               key={cat}
               className={`text-[10px] uppercase tracking-[2px] px-4 py-2 rounded-[2px] border transition-all duration-300 ${
                 cat === 'Semua'
-                  ? 'bg-rose text-white border-[#c47a8a]'
-                  : 'border-border/80 text-text-muted hover:text-text-heading hover:border-[#c47a8a]'
+                  ? 'bg-rose text-white border-rose'
+                  : 'border-border/80 text-text-muted hover:text-text-heading hover:border-rose'
               }`}
             >
               {cat}

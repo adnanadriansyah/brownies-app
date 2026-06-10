@@ -116,7 +116,7 @@ function ProductsContent() {
                 placeholder="Cari brownies..."
                 value={search}
                 onChange={(e) => handleSearch(e.target.value)}
-                className="w-full bg-bg-card border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-[#c47a8a] focus:ring-1 focus:ring-[#c47a8a]/20 rounded-[2px] pl-9 pr-3 py-2 text-[13px] transition-all duration-300"
+                className="w-full bg-bg-card border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-rose focus:ring-1 focus:ring-rose/20 rounded-[2px] pl-9 pr-3 py-2 text-[13px] transition-all duration-300"
               />
             </div>
             <motion.button
@@ -125,7 +125,7 @@ function ProductsContent() {
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-1.5 text-[10px] uppercase tracking-[1.5px] transition-colors duration-200 px-3 py-2 rounded-[2px] ${
                 showFilters || minPrice || maxPrice
-                  ? 'bg-rose/10 text-text-rose border border-[#c47a8a]/30'
+                  ? 'bg-rose/10 text-text-rose border border-rose/30'
                   : 'text-text-body hover:text-text-rose'
               }`}
             >
@@ -153,7 +153,7 @@ function ProductsContent() {
                   placeholder="0"
                   value={minPrice}
                   onChange={(e) => setMinPrice(e.target.value)}
-                  className="w-28 bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-[#c47a8a] rounded-[2px] px-3 py-1.5 text-[12px] transition-all duration-300"
+                  className="w-28 bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-rose rounded-[2px] px-3 py-1.5 text-[12px] transition-all duration-300"
                 />
               </div>
               <div>
@@ -163,7 +163,7 @@ function ProductsContent() {
                   placeholder="999999"
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
-                  className="w-28 bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-[#c47a8a] rounded-[2px] px-3 py-1.5 text-[12px] transition-all duration-300"
+                  className="w-28 bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-rose rounded-[2px] px-3 py-1.5 text-[12px] transition-all duration-300"
                 />
               </div>
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -193,7 +193,7 @@ function ProductsContent() {
             className={`px-4 py-1.5 text-[10px] uppercase tracking-[1.5px] rounded-full transition-all duration-300 ${
               !category
                 ? 'bg-rose text-white shadow-lg shadow-rose/20'
-                : 'bg-bg-card text-text-muted hover:text-text-body border border-border hover:border-[#c47a8a]/30'
+                : 'bg-bg-card text-text-muted hover:text-text-body border border-border hover:border-rose/30'
             }`}
           >
             Semua
@@ -207,7 +207,7 @@ function ProductsContent() {
               className={`px-4 py-1.5 text-[10px] uppercase tracking-[1.5px] rounded-full transition-all duration-300 ${
                 category === cat.id
                 ? 'bg-rose text-white shadow-lg shadow-rose/20'
-                : 'bg-bg-card text-text-muted hover:text-text-body border border-border hover:border-[#c47a8a]/30'
+                : 'bg-bg-card text-text-muted hover:text-text-body border border-border hover:border-rose/30'
               }`}
             >
               {cat.name}
@@ -280,7 +280,7 @@ function ProductsContent() {
                             1,
                           )
                         }
-                        className="w-8 h-8 bg-rose hover:bg-[#e8a0b0] text-white rounded-full flex items-center justify-center transition-all duration-300 shadow-lg shadow-rose/20 hover:shadow-[#e8a0b0]/30"
+                        className="w-8 h-8 bg-rose hover:bg-rose-hover text-white rounded-full flex items-center justify-center transition-all duration-300 shadow-lg shadow-rose/20 hover:shadow-text-rose/30"
                       >
                         <Plus size={14} />
                       </motion.button>

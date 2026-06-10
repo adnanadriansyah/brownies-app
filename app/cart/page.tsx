@@ -165,7 +165,7 @@ export default function CartPage() {
                     {item.imageUrl ? (
                       <Image src={item.imageUrl} alt={item.name} fill sizes="64px" className="object-cover" />
                     ) : (
-                      <div className="flex items-center justify-center h-full text-[9px] text-[#4a2218]">No Img</div>
+                      <div className="flex items-center justify-center h-full text-[9px] text-text-muted">No Img</div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -175,7 +175,7 @@ export default function CartPage() {
                     <motion.button
                       whileTap={{ scale: 0.9 }}
                       onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                      className="w-6 h-6 border-[0.5px] border-border/80 text-text-body hover:text-text-heading hover:border-[#c47a8a]/50 flex items-center justify-center transition-all duration-200"
+                      className="w-6 h-6 border-[0.5px] border-border/80 text-text-body hover:text-text-heading hover:border-rose/50 flex items-center justify-center transition-all duration-200"
                     >
                       <Minus size={10} />
                     </motion.button>
@@ -185,7 +185,7 @@ export default function CartPage() {
                     <motion.button
                       whileTap={{ scale: 0.9 }}
                       onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                      className="w-6 h-6 border-[0.5px] border-border/80 text-text-body hover:text-text-heading hover:border-[#c47a8a]/50 flex items-center justify-center transition-all duration-200"
+                      className="w-6 h-6 border-[0.5px] border-border/80 text-text-body hover:text-text-heading hover:border-rose/50 flex items-center justify-center transition-all duration-200"
                     >
                       <Plus size={10} />
                     </motion.button>
@@ -218,11 +218,11 @@ export default function CartPage() {
                         whileHover={{ borderColor: 'rgba(196,122,138,0.3)' }}
                         className={`flex items-start gap-3 p-3 border-[0.5px] rounded-[2px] cursor-pointer transition-all duration-200 ${
                           selectedAddress === addr.id
-                            ? 'border-[#c47a8a] bg-rose/5'
+                            ? 'border-rose bg-rose/5'
                             : 'border-border'
                         }`}
                       >
-                        <input type="radio" name="address" checked={selectedAddress === addr.id} onChange={() => setSelectedAddress(addr.id)} className="mt-0.5 accent-[#c47a8a]" />
+                        <input type="radio" name="address" checked={selectedAddress === addr.id} onChange={() => setSelectedAddress(addr.id)} className="mt-0.5 accent-rose" />
                         <div>
                         <p className="text-[12px] text-text-heading font-medium">
                           {addr.label}
@@ -277,7 +277,7 @@ export default function CartPage() {
                 <div className="space-y-2">
                   {['transfer', 'cod'].map((m) => (
                     <label key={m} className="flex items-center gap-2 text-[12px] text-text-body cursor-pointer hover:text-text-heading transition-colors">
-                      <input type="radio" name="payment" value={m} checked={paymentMethod === m} onChange={() => setPaymentMethod(m as any)} className="accent-[#c47a8a]" />
+                      <input type="radio" name="payment" value={m} checked={paymentMethod === m} onChange={() => setPaymentMethod(m as any)} className="accent-rose" />
                       {m === 'transfer' ? 'Transfer Bank' : 'COD'}
                     </label>
                   ))}
@@ -315,7 +315,7 @@ export default function CartPage() {
             </div>
           ))}
           <label className="flex items-center gap-2 text-[11px] text-text-body cursor-pointer">
-            <input type="checkbox" checked={addrDefault} onChange={(e) => setAddrDefault(e.target.checked)} className="accent-[#c47a8a]" />
+            <input type="checkbox" checked={addrDefault} onChange={(e) => setAddrDefault(e.target.checked)} className="accent-rose" />
             Jadikan default
           </label>
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>

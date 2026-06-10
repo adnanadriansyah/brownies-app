@@ -42,14 +42,14 @@ export default function HomePage() {
           className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(196,122,138,0.08),transparent_60%)] pointer-events-none"
         />
 
-        <div className="bg-[#1e100c] flex flex-col justify-center px-8 md:px-16 py-20 relative">
+        <div className="bg-bg-section flex flex-col justify-center px-8 md:px-16 py-20 relative">
           <motion.span
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-[10px] uppercase tracking-[3px] text-[#705050] mb-6 inline-flex items-center gap-2"
+            className="text-[10px] uppercase tracking-[3px] text-text-muted mb-6 inline-flex items-center gap-2"
           >
-            <span className="w-6 h-[0.5px] bg-[#c47a8a]" />
+            <span className="w-6 h-[0.5px] bg-rose" />
             Artisan &middot; Handcrafted Daily
           </motion.span>
 
@@ -57,7 +57,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="font-heading text-[#f0e0d6] text-5xl md:text-6xl leading-[1.1] mb-4"
+            className="font-heading text-text-heading text-5xl md:text-6xl leading-[1.1] mb-4"
           >
             Brownies{' '}
             <span className="italic text-gradient">Velours</span>
@@ -70,7 +70,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-[14px] text-[#806050] leading-relaxed max-w-md mb-8"
+            className="text-[14px] text-text-muted leading-relaxed max-w-md mb-8"
           >
             Dibuat setiap hari dengan cinta dan bahan terbaik.
             Setiap gigitan adalah pengalaman yang tak terlupakan.
@@ -96,7 +96,7 @@ export default function HomePage() {
           </motion.div>
         </div>
 
-        <div className="relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#2a1510] to-[#1a0f0a]">
+        <div className="relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-bg-card to-[#1a0f0a]">
           <motion.div
             initial={{ scale: 1.1, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -117,10 +117,10 @@ export default function HomePage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
-            className="absolute bottom-6 right-6 bg-[#221010]/90 backdrop-blur-xl border border-[rgba(200,140,110,0.2)] rounded-[4px] px-5 py-4"
+            className="absolute bottom-6 right-6 bg-bg-card/90 backdrop-blur-xl border border-border/80 rounded-[4px] px-5 py-4"
           >
-            <p className="text-[9px] uppercase tracking-[2px] text-[#705050]">Mulai dari</p>
-            <p className="font-heading text-[#e8a0b0] text-2xl">Rp 35.000</p>
+            <p className="text-[9px] uppercase tracking-[2px] text-text-muted">Mulai dari</p>
+            <p className="font-heading text-text-rose text-2xl">Rp 35.000</p>
           </motion.div>
         </div>
       </section>
@@ -130,7 +130,7 @@ export default function HomePage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 0.6 }}
-        className="bg-[#261310] border-y-[0.5px] border-[rgba(200,140,110,0.1)]"
+        className="bg-bg-card border-y-[0.5px] border-border"
       >
         <div className="max-w-7xl mx-auto px-4 py-4 grid grid-cols-3 gap-4">
           {[
@@ -138,8 +138,8 @@ export default function HomePage() {
             { icon: <Shield size={14} />, text: 'Bahan premium terjamin' },
             { icon: <Heart size={14} />, text: 'Handmade dengan cinta' },
           ].map((item, i) => (
-            <div key={i} className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[1.5px] text-[#705050]">
-              <span className="text-[#c47a8a]">{item.icon}</span>
+            <div key={i} className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[1.5px] text-text-muted">
+              <span className="text-rose">{item.icon}</span>
               {item.text}
             </div>
           ))}
@@ -155,11 +155,11 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="text-center mb-10"
           >
-            <span className="text-[10px] uppercase tracking-[3px] text-[#705050] inline-flex items-center gap-2 mb-3">
-              <span className="w-6 h-[0.5px] bg-[#c47a8a]" />
+            <span className="text-[10px] uppercase tracking-[3px] text-text-muted inline-flex items-center gap-2 mb-3">
+              <span className="w-6 h-[0.5px] bg-rose" />
               Kategori
             </span>
-            <h2 className="font-heading text-[#f0e0d6] text-3xl md:text-4xl">
+            <h2 className="font-heading text-text-heading text-3xl md:text-4xl">
               Jelajahi{' '}
               <span className="italic text-gradient">Koleksi</span> Kami
             </h2>
@@ -175,12 +175,12 @@ export default function HomePage() {
                 transition={{ delay: i * 0.1, duration: 0.4 }}
               >
                 <Link href={cat.href} className="group block card-hover">
-                  <div className="bg-[#261310] border border-[rgba(200,140,110,0.15)] rounded-[4px] p-6 text-center hover:border-[rgba(196,122,138,0.4)] transition-all duration-300">
-                    <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[#c47a8a]/10 flex items-center justify-center text-[#c47a8a] group-hover:bg-[#c47a8a]/20 transition-colors">
+                  <div className="bg-bg-card border border-border rounded-[4px] p-6 text-center hover:border-[rgba(196,122,138,0.4)] transition-all duration-300">
+                    <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-rose/10 flex items-center justify-center text-rose group-hover:bg-rose/20 transition-colors">
                       <ShoppingBag size={18} />
                     </div>
-                    <h3 className="font-heading text-[#f0e0d6] text-sm uppercase tracking-[2px] mb-1">{cat.name}</h3>
-                    <p className="text-[10px] text-[#604030] uppercase tracking-[1.5px]">{cat.count}</p>
+                    <h3 className="font-heading text-text-heading text-sm uppercase tracking-[2px] mb-1">{cat.name}</h3>
+                    <p className="text-[10px] text-text-muted uppercase tracking-[1.5px]">{cat.count}</p>
                   </div>
                 </Link>
               </motion.div>
@@ -191,7 +191,7 @@ export default function HomePage() {
 
       {/* ── FEATURED PRODUCTS ── */}
       {featured.length > 0 && (
-        <section className="py-16 md:py-20 bg-[#1e100c]">
+        <section className="py-16 md:py-20 bg-bg-section">
           <div className="max-w-7xl mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -200,16 +200,16 @@ export default function HomePage() {
               className="flex items-end justify-between mb-10"
             >
               <div>
-                <span className="text-[10px] uppercase tracking-[3px] text-[#705050] inline-flex items-center gap-2 mb-3">
-                  <span className="w-6 h-[0.5px] bg-[#c47a8a]" />
+                <span className="text-[10px] uppercase tracking-[3px] text-text-muted inline-flex items-center gap-2 mb-3">
+                  <span className="w-6 h-[0.5px] bg-rose" />
                   Best Seller
                 </span>
-                <h2 className="font-heading text-[#f0e0d6] text-3xl md:text-4xl">
+                <h2 className="font-heading text-text-heading text-3xl md:text-4xl">
                   Brownies{' '}
                   <span className="italic text-gradient">Pilihan</span>
                 </h2>
               </div>
-              <Link href="/products" className="hidden md:inline-flex items-center gap-1 text-[10px] uppercase tracking-[2px] text-[#c47a8a] hover:text-[#e8a0b0] transition-colors">
+              <Link href="/products" className="hidden md:inline-flex items-center gap-1 text-[10px] uppercase tracking-[2px] text-rose hover:text-text-rose transition-colors">
                 Lihat Semua <ArrowRight size={12} />
               </Link>
             </motion.div>
@@ -218,19 +218,19 @@ export default function HomePage() {
               {featured.slice(0, 6).map((product: any) => (
                 <StaggerItem key={product.id}>
                   <Link href={`/products/${product.id}`} className="group block card-hover">
-                    <article className="bg-[#261310] border border-[rgba(200,140,110,0.15)] rounded-[4px] overflow-hidden">
-                      <div className="relative aspect-square overflow-hidden bg-[#1a0f0a]">
+                    <article className="bg-bg-card border border-border rounded-[4px] overflow-hidden">
+                      <div className="relative aspect-square overflow-hidden bg-bg-primary">
                         {product.imageUrl ? (
                           <Image src={product.imageUrl} alt={product.name} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-all duration-700 group-hover:scale-110" />
                         ) : (
-                          <div className="flex items-center justify-center h-full text-[9px] text-[#4a2218]">No Image</div>
+                          <div className="flex items-center justify-center h-full text-[9px] text-text-muted">No Image</div>
                         )}
                       </div>
                       <div className="p-4">
-                        <h3 className="font-heading text-[#f0e0d6] text-sm mb-1 group-hover:text-[#e8a0b0] transition-colors">
+                        <h3 className="font-heading text-text-heading text-sm mb-1 group-hover:text-text-rose transition-colors">
                           {product.name}
                         </h3>
-                        <p className="text-[20px] font-heading text-[#e8a0b0]">
+                        <p className="text-[20px] font-heading text-text-rose">
                           Rp {product.price?.toLocaleString('id-ID')}
                         </p>
                       </div>
@@ -264,15 +264,15 @@ export default function HomePage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <span className="text-[10px] uppercase tracking-[3px] text-[#705050] inline-flex items-center gap-2 mb-4">
-                <span className="w-6 h-[0.5px] bg-[#c47a8a]" />
+              <span className="text-[10px] uppercase tracking-[3px] text-text-muted inline-flex items-center gap-2 mb-4">
+                <span className="w-6 h-[0.5px] bg-rose" />
                 Tentang Velours
               </span>
-              <h2 className="font-heading text-[#f0e0d6] text-3xl md:text-4xl leading-[1.15] mb-4">
+              <h2 className="font-heading text-text-heading text-3xl md:text-4xl leading-[1.15] mb-4">
                 Cerita di Balik{' '}
                 <span className="italic text-gradient">Setiap Gigitan</span>
               </h2>
-              <p className="text-[13px] text-[#806050] leading-relaxed mb-6">
+              <p className="text-[13px] text-text-muted leading-relaxed mb-6">
                 Berawal dari dapur kecil di tahun 2020, Velours lahir dari hasrat untuk menciptakan brownies
                 yang bukan sekadar kue — tetapi pengalaman. Setiap resep diuji puluhan kali hingga menemukan
                 keseimbangan sempurna antara fudgy dan chewy.
@@ -298,10 +298,10 @@ export default function HomePage() {
                 { icon: <Heart size={20} />, title: 'Love', desc: 'Dipanggang dengan penuh cinta' },
                 { icon: <Leaf size={20} />, title: 'Natural', desc: 'Tanpa pengawet, fresh daily' },
               ].map((item) => (
-                <div key={item.title} className="bg-[#261310] border border-[rgba(200,140,110,0.15)] rounded-[4px] p-5 card-hover">
-                  <div className="text-[#c47a8a] mb-3">{item.icon}</div>
-                  <h3 className="font-heading text-[#f0e0d6] text-sm uppercase tracking-[2px] mb-1">{item.title}</h3>
-                  <p className="text-[10px] text-[#604030]">{item.desc}</p>
+                <div key={item.title} className="bg-bg-card border border-border rounded-[4px] p-5 card-hover">
+                  <div className="text-rose mb-3">{item.icon}</div>
+                  <h3 className="font-heading text-text-heading text-sm uppercase tracking-[2px] mb-1">{item.title}</h3>
+                  <p className="text-[10px] text-text-muted">{item.desc}</p>
                 </div>
               ))}
             </motion.div>
@@ -310,7 +310,7 @@ export default function HomePage() {
       </section>
 
       {/* ── WHY VELOURS ── */}
-      <section className="py-16 md:py-24 bg-[#1e100c]">
+      <section className="py-16 md:py-24 bg-bg-section">
         <div className="max-w-7xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -318,11 +318,11 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <span className="text-[10px] uppercase tracking-[3px] text-[#705050] inline-flex items-center gap-2 mb-3">
-              <span className="w-6 h-[0.5px] bg-[#c47a8a]" />
+            <span className="text-[10px] uppercase tracking-[3px] text-text-muted inline-flex items-center gap-2 mb-3">
+              <span className="w-6 h-[0.5px] bg-rose" />
               Keunggulan
             </span>
-            <h2 className="font-heading text-[#f0e0d6] text-3xl md:text-4xl">
+            <h2 className="font-heading text-text-heading text-3xl md:text-4xl">
               Kenapa Memilih{' '}
               <span className="italic text-gradient">Velours</span>?
             </h2>
@@ -340,13 +340,13 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-[#261310] border border-[rgba(200,140,110,0.15)] rounded-[4px] p-8 text-center card-hover"
+                className="bg-bg-card border border-border rounded-[4px] p-8 text-center card-hover"
               >
-                <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-[#c47a8a]/10 flex items-center justify-center text-[#c47a8a]">
+                <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-rose/10 flex items-center justify-center text-rose">
                   {item.icon}
                 </div>
-                <h3 className="font-heading text-[#f0e0d6] text-base uppercase tracking-[2px] mb-2">{item.title}</h3>
-                <p className="text-[12px] text-[#705050] leading-relaxed">{item.desc}</p>
+                <h3 className="font-heading text-text-heading text-base uppercase tracking-[2px] mb-2">{item.title}</h3>
+                <p className="text-[12px] text-text-muted leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -363,16 +363,16 @@ export default function HomePage() {
             className="flex items-end justify-between mb-10"
           >
             <div>
-              <span className="text-[10px] uppercase tracking-[3px] text-[#705050] inline-flex items-center gap-2 mb-3">
-                <span className="w-6 h-[0.5px] bg-[#c47a8a]" />
+              <span className="text-[10px] uppercase tracking-[3px] text-text-muted inline-flex items-center gap-2 mb-3">
+                <span className="w-6 h-[0.5px] bg-rose" />
                 Blog
               </span>
-              <h2 className="font-heading text-[#f0e0d6] text-3xl md:text-4xl">
+              <h2 className="font-heading text-text-heading text-3xl md:text-4xl">
                 Cerita &{' '}
                 <span className="italic text-gradient">Tips</span>
               </h2>
             </div>
-            <Link href="/blog" className="hidden md:inline-flex items-center gap-1 text-[10px] uppercase tracking-[2px] text-[#c47a8a] hover:text-[#e8a0b0] transition-colors">
+            <Link href="/blog" className="hidden md:inline-flex items-center gap-1 text-[10px] uppercase tracking-[2px] text-rose hover:text-text-rose transition-colors">
               Semua Artikel <ArrowRight size={12} />
             </Link>
           </motion.div>
@@ -387,14 +387,14 @@ export default function HomePage() {
                 transition={{ delay: i * 0.1, duration: 0.4 }}
               >
                 <Link href={article.href} className="group block card-hover">
-                  <article className="bg-[#261310] border border-[rgba(200,140,110,0.15)] rounded-[4px] overflow-hidden h-full">
-                    <div className="relative aspect-[16/10] bg-gradient-to-br from-[#2a1510] to-[#1a0f0a] overflow-hidden">
-                      <div className="absolute inset-0 flex items-center justify-center text-[#c47a8a]/30">
+                  <article className="bg-bg-card border border-border rounded-[4px] overflow-hidden h-full">
+                    <div className="relative aspect-[16/10] bg-gradient-to-br from-bg-card to-[#1a0f0a] overflow-hidden">
+                      <div className="absolute inset-0 flex items-center justify-center text-rose/30">
                         <Heart size={32} />
                       </div>
                     </div>
                     <div className="p-5">
-                      <h3 className="font-heading text-[#f0e0d6] text-sm leading-snug group-hover:text-[#e8a0b0] transition-colors">
+                      <h3 className="font-heading text-text-heading text-sm leading-snug group-hover:text-text-rose transition-colors">
                         {article.title}
                       </h3>
                     </div>
@@ -418,7 +418,7 @@ export default function HomePage() {
       </section>
 
       {/* ── TESTIMONIAL / NUMBERS ── */}
-      <section className="py-16 md:py-20 bg-[#1e100c] border-y-[0.5px] border-[rgba(200,140,110,0.1)]">
+      <section className="py-16 md:py-20 bg-bg-section border-y-[0.5px] border-border">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
@@ -435,8 +435,8 @@ export default function HomePage() {
                 transition={{ delay: i * 0.1 }}
                 className="text-center"
               >
-                <p className="font-heading text-[#e8a0b0] text-3xl md:text-4xl mb-1">{stat.number}</p>
-                <p className="text-[10px] uppercase tracking-[2px] text-[#705050]">{stat.label}</p>
+                <p className="font-heading text-text-rose text-3xl md:text-4xl mb-1">{stat.number}</p>
+                <p className="text-[10px] uppercase tracking-[2px] text-text-muted">{stat.label}</p>
               </motion.div>
             ))}
           </div>
@@ -451,16 +451,16 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <span className="text-[10px] uppercase tracking-[3px] text-[#705050] inline-flex items-center gap-2 mb-4">
-              <span className="w-6 h-[0.5px] bg-[#c47a8a]" />
+            <span className="text-[10px] uppercase tracking-[3px] text-text-muted inline-flex items-center gap-2 mb-4">
+              <span className="w-6 h-[0.5px] bg-rose" />
               Siap Mencicipi?
             </span>
-            <h2 className="font-heading text-[#f0e0d6] text-3xl md:text-5xl leading-[1.15] mb-4">
+            <h2 className="font-heading text-text-heading text-3xl md:text-5xl leading-[1.15] mb-4">
               Pesan Sekarang dan{' '}
               <span className="italic text-gradient">Rasakan</span>{' '}
               Perbedaannya
             </h2>
-            <p className="text-[13px] text-[#806050] max-w-lg mx-auto mb-8">
+            <p className="text-[13px] text-text-muted max-w-lg mx-auto mb-8">
               Gratis ongkir untuk pembelian minimal Rp 200.000. Kami siap antar ke kotamu!
             </p>
             <div className="flex gap-3 justify-center flex-wrap">

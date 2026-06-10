@@ -80,7 +80,7 @@ export default function ProductDetailPage() {
         animate={{ opacity: 1 }}
         className="flex-1 flex flex-col items-center justify-center gap-4"
       >
-        <p className="text-[#705050]">Produk tidak ditemukan</p>
+        <p className="text-text-muted">Produk tidak ditemukan</p>
         <Link href="/products">
           <Button variant="outline">Kembali</Button>
         </Link>
@@ -205,7 +205,7 @@ export default function ProductDetailPage() {
           </p>
 
           {product.description && (
-            <p className="text-[13px] text-text-body leading-relaxed mb-6 border-l-[0.5px] border-[#c47a8a]/30 pl-4">
+            <p className="text-[13px] text-text-body leading-relaxed mb-6 border-l-[0.5px] border-rose/30 pl-4">
               {product.description}
             </p>
           )}
@@ -218,7 +218,7 @@ export default function ProductDetailPage() {
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setQty(Math.max(1, qty - 1))}
-                className="w-8 h-8 border-[0.5px] border-border/80 text-text-body hover:text-text-heading hover:border-[#c47a8a]/50 flex items-center justify-center transition-all duration-200"
+                className="w-8 h-8 border-[0.5px] border-border/80 text-text-body hover:text-text-heading hover:border-rose/50 flex items-center justify-center transition-all duration-200"
               >
                 <Minus size={12} />
               </motion.button>
@@ -233,7 +233,7 @@ export default function ProductDetailPage() {
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setQty(Math.min(product.stock, qty + 1))}
-                className="w-8 h-8 border-[0.5px] border-border/80 text-text-body hover:text-text-heading hover:border-[#c47a8a]/50 flex items-center justify-center transition-all duration-200"
+                className="w-8 h-8 border-[0.5px] border-border/80 text-text-body hover:text-text-heading hover:border-rose/50 flex items-center justify-center transition-all duration-200"
               >
                 <Plus size={12} />
               </motion.button>
@@ -249,7 +249,7 @@ export default function ProductDetailPage() {
                 <Button
                   variant="primary"
                   size="lg"
-                  className={`w-full group relative ${addedToCart ? 'bg-success hover:bg-[#8ec87a]' : ''}`}
+                  className={`w-full group relative ${addedToCart ? 'bg-success hover:bg-success' : ''}`}
                   onClick={handleAddToCart}
                 >
                   <AnimatePresence mode="wait">
@@ -340,7 +340,7 @@ export default function ProductDetailPage() {
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 rows={3}
-                className="w-full bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-[#c47a8a] focus:ring-1 focus:ring-[#c47a8a]/20 rounded-[2px] px-3 py-2 text-[13px] resize-none transition-all duration-300 mb-3"
+                className="w-full bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-rose focus:ring-1 focus:ring-rose/20 rounded-[2px] px-3 py-2 text-[13px] resize-none transition-all duration-300 mb-3"
               />
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Button size="sm" onClick={submitReview} disabled={rating === 0 || submitting}>

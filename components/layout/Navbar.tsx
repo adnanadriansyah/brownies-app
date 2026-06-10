@@ -1,14 +1,16 @@
 'use client'
 
 import Link from 'next/link'
-import { Search, ShoppingBag, User, LogOut, Menu, X } from 'lucide-react'
+import { Search, ShoppingBag, User, LogOut, Menu, X, Moon, Sun } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { useSession, signOut } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTheme } from '@/components/theme/ThemeProvider'
 
 export function Navbar() {
   const { data: session } = useSession()
+  const { theme, toggle } = useTheme()
   const totalItems = useCart((s) => s.totalItems())
   const [searchOpen, setSearchOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -84,6 +86,16 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-4">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={toggle}
+            className="text-text-body hover:text-text-rose transition-colors duration-200"
+            title={theme === 'dark' ? 'Mode Terang' : 'Mode Gelap'}
+          >
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          </motion.button>
+
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -175,7 +187,7 @@ export function Navbar() {
                   type="text"
                   placeholder="Cari brownies..."
                   autoFocus
-                  className="w-full bg-bg-card border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-[#c47a8a] rounded-[2px] pl-9 pr-4 py-2 text-[13px] transition-all duration-300"
+                  className="w-full bg-bg-card border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-rose rounded-[2px] pl-9 pr-4 py-2 text-[13px] transition-all duration-300"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       const q = (e.target as HTMLInputElement).value
@@ -195,7 +207,7 @@ export function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden border-t-[0.5px] border-[rgba(200,140,110,0.1)] overflow-hidden"
+            className="md:hidden border-t-[0.5px] border-border overflow-hidden"
           >
             <div className="px-4 py-4 space-y-3">
               <Link href="/" className="block text-[12px] uppercase tracking-[2px] text-text-body hover:text-text-rose transition-colors" onClick={() => setMobileOpen(false)}>Beranda</Link>

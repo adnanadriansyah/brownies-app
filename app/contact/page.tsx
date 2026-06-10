@@ -94,7 +94,7 @@ export default function ContactPage() {
                 <label className="text-[10px] uppercase tracking-[2px] text-text-muted block mb-2">Nama</label>
                 <input
                   required
-                  className="w-full bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-[#c47a8a] rounded-[2px] px-4 py-2.5 text-[13px] transition-all"
+                  className="w-full bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-rose rounded-[2px] px-4 py-2.5 text-[13px] transition-all"
                   placeholder="Nama kamu"
                 />
               </div>
@@ -103,7 +103,7 @@ export default function ContactPage() {
                 <input
                   required
                   type="email"
-                  className="w-full bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-[#c47a8a] rounded-[2px] px-4 py-2.5 text-[13px] transition-all"
+                  className="w-full bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-rose rounded-[2px] px-4 py-2.5 text-[13px] transition-all"
                   placeholder="email@kamu.com"
                 />
               </div>
@@ -112,7 +112,7 @@ export default function ContactPage() {
               <label className="text-[10px] uppercase tracking-[2px] text-text-muted block mb-2">Subjek</label>
               <input
                 required
-                className="w-full bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-[#c47a8a] rounded-[2px] px-4 py-2.5 text-[13px] transition-all"
+                className="w-full bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-rose rounded-[2px] px-4 py-2.5 text-[13px] transition-all"
                 placeholder="Ada yang bisa kami bantu?"
               />
             </div>
@@ -121,7 +121,7 @@ export default function ContactPage() {
               <textarea
                 required
                 rows={5}
-                className="w-full bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-[#c47a8a] rounded-[2px] px-4 py-2.5 text-[13px] transition-all resize-none"
+                className="w-full bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-rose rounded-[2px] px-4 py-2.5 text-[13px] transition-all resize-none"
                 placeholder="Tulis pesan kamu di sini..."
               />
             </div>
@@ -129,7 +129,7 @@ export default function ContactPage() {
               type="submit"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full bg-rose text-white text-[11px] uppercase tracking-[2px] px-8 py-3 rounded-[2px] hover:bg-[#d48a9a] transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-rose text-white text-[11px] uppercase tracking-[2px] px-8 py-3 rounded-[2px] hover:bg-rose/80 transition-colors flex items-center justify-center gap-2"
             >
               {sent ? (
                 <>Terkirim! Kami akan membalas dalam 1x24 jam</>
