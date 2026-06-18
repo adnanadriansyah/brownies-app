@@ -103,10 +103,10 @@ export default function HomePage() {
             transition={{ duration: 1.2, ease: 'easeOut' }}
           >
             <Image
-              src="/hero-brownies.jpg"
+              src="/hero-new.jpg"
               alt="Brownies Velours"
-              width={530}
-              height={629}
+              width={736}
+              height={920}
               className="object-contain max-h-[90vh] w-auto h-auto"
               preload
             />
