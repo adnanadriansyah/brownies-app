@@ -236,7 +236,7 @@ function ProductsContent() {
           {data?.products.map((product) => (
             <StaggerItem key={product.id}>
               <Card className="overflow-hidden group h-full flex flex-col">
-                <Link href={`/products/${product.id}`} className="block relative h-[180px] bg-bg-primary overflow-hidden">
+                <Link href={`/products/${product.id}`} className="block relative aspect-square bg-bg-primary overflow-hidden">
                   {product.imageUrl ? (
                     <>
                       <Image
@@ -245,6 +245,7 @@ function ProductsContent() {
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className={`object-cover transition-all duration-700 group-hover:scale-110 ${imgLoaded[product.id] ? 'image-loaded' : 'image-loading'}`}
+                        unoptimized
                         onLoad={() => setImgLoaded((prev) => ({ ...prev, [product.id]: true }))}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-bg-primary/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

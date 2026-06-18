@@ -25,7 +25,10 @@ export async function GET(req: NextRequest) {
   const limit = parseInt(searchParams.get('limit') || '20')
 
   const where: any = {}
-  if (category) where.categoryId = category
+  if (category) {
+    const catBySlug = await prisma.category.findFirst({ where: { slug: category }, select: { id: true } })
+    where.categoryId = catBySlug?.id || category
+  }
   if (search) where.name = { contains: search, mode: 'insensitive' }
   if (minPrice || maxPrice) {
     where.price = {}

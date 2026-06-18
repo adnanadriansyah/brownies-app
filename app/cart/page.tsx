@@ -43,6 +43,7 @@ export default function CartPage() {
   const [addrProvince, setAddrProvince] = useState('')
   const [addrPostal, setAddrPostal] = useState('')
   const [addrDefault, setAddrDefault] = useState(false)
+  const [addrError, setAddrError] = useState('')
 
   useEffect(() => {
     if (!session) { router.push('/login'); return }
@@ -62,6 +63,11 @@ export default function CartPage() {
   const total = subtotal() + shipping
 
   async function addAddress() {
+    setAddrError('')
+    if (!addrLabel.trim() || !addrStreet.trim() || !addrCity.trim() || !addrProvince.trim() || !addrPostal.trim()) {
+      setAddrError('Semua field harus diisi')
+      return
+    }
     const res = await fetch('/api/addresses', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -73,6 +79,9 @@ export default function CartPage() {
       if (addrDefault) setSelectedAddress(addr.id)
       setShowAddressModal(false)
       setAddrLabel(''); setAddrStreet(''); setAddrCity(''); setAddrProvince(''); setAddrPostal(''); setAddrDefault(false)
+    } else {
+      const err = await res.json()
+      setAddrError(err.error ? 'Validasi gagal: periksa input' : 'Gagal menyimpan alamat')
     }
   }
 
@@ -163,7 +172,7 @@ export default function CartPage() {
                 >
                   <div className="relative w-16 h-16 shrink-0 bg-bg-card overflow-hidden rounded-[2px]">
                     {item.imageUrl ? (
-                      <Image src={item.imageUrl} alt={item.name} fill sizes="64px" className="object-cover" />
+                      <Image src={item.imageUrl} alt={item.name} fill sizes="64px" className="object-cover" unoptimized />
                     ) : (
                       <div className="flex items-center justify-center h-full text-[9px] text-text-muted">No Img</div>
                     )}
@@ -296,19 +305,20 @@ export default function CartPage() {
 
       <Modal open={showAddressModal} onClose={() => setShowAddressModal(false)} title="Tambah Alamat Baru">
         <div className="space-y-4">
-          {(['label', 'street', 'city', 'postalCode'] as const).map((f) => (
+          {(['label', 'street', 'city', 'province', 'postalCode'] as const).map((f) => (
             <div key={f}>
                 <label className="text-[9px] uppercase tracking-[1.5px] text-text-muted block mb-1">
-                {f === 'label' ? 'Label' : f === 'street' ? 'Jalan' : f === 'city' ? 'Kota' : 'Kode Pos'}
+                {f === 'label' ? 'Label' : f === 'street' ? 'Jalan' : f === 'city' ? 'Kota' : f === 'province' ? 'Provinsi' : 'Kode Pos'}
               </label>
               <Input
-                placeholder={f === 'label' ? 'Rumah / Kantor' : f === 'street' ? 'Nama jalan' : f === 'city' ? 'Kota' : '12345'}
-                value={f === 'label' ? addrLabel : f === 'street' ? addrStreet : f === 'city' ? addrCity : addrPostal}
+                placeholder={f === 'label' ? 'Rumah / Kantor' : f === 'street' ? 'Nama jalan' : f === 'city' ? 'Kota' : f === 'province' ? 'Provinsi' : '12345'}
+                value={f === 'label' ? addrLabel : f === 'street' ? addrStreet : f === 'city' ? addrCity : f === 'province' ? addrProvince : addrPostal}
                 onChange={(e) => {
                   const v = e.target.value
                   if (f === 'label') setAddrLabel(v)
                   else if (f === 'street') setAddrStreet(v)
                   else if (f === 'city') setAddrCity(v)
+                  else if (f === 'province') setAddrProvince(v)
                   else setAddrPostal(v)
                 }}
               />
@@ -318,6 +328,7 @@ export default function CartPage() {
             <input type="checkbox" checked={addrDefault} onChange={(e) => setAddrDefault(e.target.checked)} className="accent-rose" />
             Jadikan default
           </label>
+          {addrError && <p className="text-[11px] text-danger">{addrError}</p>}
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <Button size="sm" className="w-full" onClick={addAddress}>Simpan</Button>
           </motion.div>

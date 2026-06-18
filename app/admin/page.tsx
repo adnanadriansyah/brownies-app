@@ -22,8 +22,9 @@ interface Category { id: string; name: string; slug: string; _count: { products:
 interface Product { id: string; name: string; slug: string; price: number; stock: number; imageUrl: string | null; isActive: boolean; category: { id: string; name: string }; createdAt: string }
 interface Order { id: string; status: string; totalAmount: number; createdAt: string; user: { name: string; email: string }; items: { product: { name: string } }[] }
 interface Review { id: string; rating: number; comment: string | null; createdAt: string; user: { name: string }; product: { name: string } }
+interface AppUser { id: string; name: string; email: string; role: string; createdAt: string; _count: { orders: number; reviews: number } }
 
-type Tab = 'dashboard' | 'products' | 'orders' | 'categories' | 'reviews'
+type Tab = 'dashboard' | 'products' | 'orders' | 'categories' | 'reviews' | 'users'
 
 const statusStyles: Record<string, string> = {
   PENDING: 'bg-[rgba(196,122,138,0.2)] text-text-rose',
@@ -39,6 +40,7 @@ const navItems: { key: Tab; label: string; icon: React.ReactNode }[] = [
   { key: 'orders', label: 'Pesanan', icon: <ShoppingCart size={15} /> },
   { key: 'categories', label: 'Kategori', icon: <Tags size={15} /> },
   { key: 'reviews', label: 'Ulasan', icon: <Star size={15} /> },
+  { key: 'users', label: 'Pelanggan', icon: <Users size={15} /> },
 ]
 
 export default function AdminPage() {
@@ -46,7 +48,7 @@ export default function AdminPage() {
   const { data: session } = useSession()
   const [tab, setTab] = useState<Tab>('dashboard')
   const [mobileSidebar, setMobileSidebar] = useState(false)
-  const [allData, setAllData] = useState<{ products: Product[]; orders: Order[]; categories: Category[]; reviews: Review[] }>({ products: [], orders: [], categories: [], reviews: [] })
+  const [allData, setAllData] = useState<{ products: Product[]; orders: Order[]; categories: Category[]; reviews: Review[]; users: AppUser[] }>({ products: [], orders: [], categories: [], reviews: [], users: [] })
   const [loading, setLoading] = useState(true)
 
   const [showProductModal, setShowProductModal] = useState(false)
@@ -59,6 +61,8 @@ export default function AdminPage() {
   const [prodImage, setProdImage] = useState('')
   const [prodCategory, setProdCategory] = useState('')
   const [prodActive, setProdActive] = useState(true)
+  const [prodError, setProdError] = useState('')
+  const [availableImages, setAvailableImages] = useState<{ name: string; url: string }[]>([])
   const [showCatModal, setShowCatModal] = useState(false)
   const [catName, setCatName] = useState('')
   const [catSlug, setCatSlug] = useState('')
@@ -73,14 +77,23 @@ export default function AdminPage() {
   async function fetchData() {
     setLoading(true)
     try {
-      const [pRes, oRes, cRes] = await Promise.all([
+      const [pRes, oRes, cRes, iRes, uRes] = await Promise.all([
         fetch('/api/products'),
         fetch('/api/orders?all=true'),
         fetch('/api/categories'),
+        fetch('/api/images'),
+        fetch('/api/users'),
       ])
       const pData = await pRes.json()
       const oData = await oRes.json()
       const cData = await cRes.json()
+
+      let images: { name: string; url: string }[] = []
+      try { images = await iRes.json() } catch {}
+
+      let usersList: AppUser[] = []
+      try { usersList = await uRes.json() } catch {}
+
       const productsList: Product[] = pData.products || []
 
       const allReviews: Review[] = []
@@ -94,14 +107,15 @@ export default function AdminPage() {
         } catch {}
       }
 
-      setAllData({ products: productsList, orders: oData || [], categories: cData || [], reviews: allReviews })
+      setAllData({ products: productsList, orders: oData || [], categories: cData || [], reviews: allReviews, users: usersList })
+      setAvailableImages(images)
     } catch {}
     setLoading(false)
   }
 
   if (!session || session.user?.role !== 'ADMIN') return null
 
-  const { products, orders, categories, reviews } = allData
+  const { products, orders, categories, reviews, users } = allData
   const totalRevenue = orders.filter(o => o.status !== 'CANCELLED').reduce((s, o) => s + o.totalAmount, 0)
   const pendingOrders = orders.filter(o => o.status === 'PENDING')
   const lowStockProducts = products.filter(p => p.isActive && p.stock <= 10)
@@ -113,7 +127,7 @@ export default function AdminPage() {
         <Link href="/admin" className="font-heading text-text-heading text-base uppercase tracking-[3px]">Velours</Link>
         <p className="text-[8px] text-text-muted uppercase tracking-[2px] mt-1">Admin Panel</p>
       </div>
-      <nav className="flex-1 p-3 space-y-1">
+      <nav className="flex-1 p-3 space-y-0.5">
         {navItems.map((item) => (
           <motion.button
             key={item.key}
@@ -122,7 +136,7 @@ export default function AdminPage() {
             onClick={() => { setTab(item.key); setMobileSidebar(false) }}
             className={`w-full flex items-center gap-3 px-3 py-2.5 text-[11px] rounded-[2px] transition-all duration-200 ${
               tab === item.key
-                ? 'bg-rose/10 text-text-rose border-l-[2px] border-rose'
+                ? 'bg-rose/10 text-text-rose border-l-[2px] border-rose shadow-sm'
                 : 'text-text-muted hover:text-text-body hover:bg-white/[0.02] border-l-[2px] border-transparent'
             }`}
           >
@@ -132,9 +146,21 @@ export default function AdminPage() {
         ))}
       </nav>
       <div className="p-3 border-t-[0.5px] border-white/10 space-y-1">
-        <div className="px-3 py-2 text-[10px] text-text-muted truncate">
-          {session.user?.name || session.user?.email}
+        <div className="px-3 py-2 flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-rose to-[#e8a0b0] flex items-center justify-center text-white text-[10px] font-medium shrink-0">
+            {(session.user?.name || 'A').charAt(0)}
+          </div>
+          <div className="truncate">
+            <p className="text-[11px] text-text-heading truncate font-medium">{session.user?.name || 'Admin'}</p>
+            <p className="text-[8px] text-text-muted uppercase tracking-[1px]">Administrator</p>
+          </div>
         </div>
+        <Link
+          href="/"
+          className="w-full flex items-center gap-3 px-3 py-2 text-[11px] text-text-muted hover:text-text-rose transition-colors rounded-[2px] hover:bg-white/[0.02]"
+        >
+          <ShoppingCart size={13} /> Lihat Toko
+        </Link>
         <button
           onClick={() => signOut()}
           className="w-full flex items-center gap-3 px-3 py-2 text-[11px] text-text-muted hover:text-danger transition-colors rounded-[2px] hover:bg-white/[0.02]"
@@ -146,7 +172,7 @@ export default function AdminPage() {
   )
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-bg-primary">
+    <div className="flex min-h-screen bg-bg-primary">
       {/* Desktop sidebar */}
       <aside className="w-[220px] bg-bg-sidebar border-r-[0.5px] border-border shrink-0 hidden md:flex flex-col">
         {sidebar}
@@ -226,7 +252,7 @@ export default function AdminPage() {
                       { label: 'Total Pendapatan', value: formatRupiah(totalRevenue), icon: <DollarSign size={16} />, color: '#8ec87a' },
                       { label: 'Pesanan Masuk', value: String(pendingOrders.length), icon: <ShoppingCart size={16} />, color: '#fac775' },
                       { label: 'Produk Aktif', value: String(products.filter(p => p.isActive).length), icon: <Package size={16} />, color: '#85b7eb' },
-                      { label: 'Kategori', value: String(categories.length), icon: <Tags size={16} />, color: '#e8a0b0' },
+                      { label: 'Pelanggan', value: String(users.length), icon: <Users size={16} />, color: '#e8a0b0' },
                     ].map((stat, i) => (
                       <motion.div
                         key={stat.label}
@@ -355,7 +381,7 @@ export default function AdminPage() {
                           >
                             <td className="py-3 pl-4 pr-4">
                               <div className="w-10 h-10 bg-bg-card rounded-[2px] relative overflow-hidden">
-                                {p.imageUrl && <Image src={p.imageUrl} alt="" fill sizes="40px" className="object-cover" />}
+                                {p.imageUrl && <Image src={p.imageUrl} alt="" fill sizes="40px" className="object-cover" unoptimized />}
                               </div>
                             </td>
                             <td className="py-3 pr-4 text-text-heading font-medium">{p.name}</td>
@@ -579,6 +605,67 @@ export default function AdminPage() {
                   </div>
                 </div>
               )}
+
+              {/* ── USERS ── */}
+              {tab === 'users' && (
+                <div>
+                  <div className="mb-6">
+                    <h1 className="font-heading text-text-heading text-2xl">Pelanggan</h1>
+                    <p className="text-[11px] text-text-muted mt-1">{users.length} terdaftar</p>
+                  </div>
+                  <div className="overflow-x-auto bg-bg-card border-[0.5px] border-border rounded-[4px]">
+                    <table className="w-full text-[11px]">
+                      <thead>
+                        <tr className="border-b-[0.5px] border-border text-text-muted uppercase tracking-[1px]">
+                          <th className="text-left py-3 px-4">Nama</th>
+                          <th className="text-left py-3 pr-4">Email</th>
+                          <th className="text-center py-3 pr-4">Role</th>
+                          <th className="text-center py-3 pr-4">Pesanan</th>
+                          <th className="text-center py-3 pr-4">Ulasan</th>
+                          <th className="text-left py-3 pr-4">Bergabung</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {users.length === 0 ? (
+                          <tr>
+                            <td colSpan={6} className="text-center py-8 text-text-muted">Belum ada pelanggan</td>
+                          </tr>
+                        ) : (
+                          users.map((u, i) => (
+                            <motion.tr
+                              key={u.id}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: i * 0.03 }}
+                              className="border-b-[0.5px] border-border hover:bg-white/[0.02]"
+                            >
+                              <td className="py-3 pl-4 pr-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-rose to-[#e8a0b0] flex items-center justify-center text-white text-[11px] font-medium shrink-0">
+                                    {(u.name || 'U').charAt(0)}
+                                  </div>
+                                  <span className="text-text-heading font-medium">{u.name}</span>
+                                </div>
+                              </td>
+                              <td className="py-3 pr-4 text-text-muted">{u.email}</td>
+                              <td className="py-3 pr-4 text-center">
+                                <span className={`text-[8px] uppercase tracking-[1px] px-2 py-0.5 rounded-[1px] ${
+                                  u.role === 'ADMIN' ? 'bg-[rgba(239,159,39,0.15)] text-warning' : 'bg-[rgba(63,122,50,0.2)] text-success'
+                                }`}>
+                                  {u.role}
+                                </span>
+                              </td>
+                              <td className="py-3 pr-4 text-center text-text-body">{u._count.orders}</td>
+                              <td className="py-3 pr-4 text-center text-text-body">{u._count.reviews}</td>
+                              <td className="py-3 pr-4 text-text-muted">{formatDate(u.createdAt)}</td>
+                            </motion.tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -618,49 +705,119 @@ export default function AdminPage() {
             </div>
           </div>
           <div>
-            <label className="text-[9px] uppercase tracking-[1.5px] text-text-muted block mb-1">Gambar URL</label>
-            <Input value={prodImage} onChange={(e) => setProdImage(e.target.value)} />
+            <label className="text-[9px] uppercase tracking-[1.5px] text-text-muted block mb-1">Gambar</label>
+            {availableImages.length > 0 ? (
+              <div className="grid grid-cols-4 gap-2">
+                {availableImages.map((img) => (
+                  <button
+                    key={img.url}
+                    type="button"
+                    onClick={() => setProdImage(img.url)}
+                    className={`relative aspect-square rounded-[2px] overflow-hidden border-2 transition-all duration-200 ${
+                      prodImage === img.url ? 'border-rose ring-1 ring-rose/30' : 'border-border/60 hover:border-rose/50'
+                    }`}
+                  >
+                    <Image src={img.url} alt={img.name} fill sizes="100px" className="object-cover" />
+                  </button>
+                ))}
+                {prodImage && !availableImages.some(i => i.url === prodImage) && (
+                  <div className="col-span-4 flex items-center gap-2 text-[10px] text-text-muted">
+                    <span>URL kustom:</span>
+                    <input
+                      value={prodImage}
+                      onChange={(e) => setProdImage(e.target.value)}
+                      className="flex-1 bg-bg-primary border border-border/80 text-text-heading px-2 py-1 rounded-[2px] text-[11px] focus:outline-none focus:border-rose"
+                    />
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Input value={prodImage} onChange={(e) => setProdImage(e.target.value)} placeholder="/nama-file.jpg" />
+            )}
+            {prodImage && (
+              <div className="relative w-20 h-20 mt-2 rounded-[2px] overflow-hidden border border-border/60">
+                <Image src={prodImage} alt="Preview" fill sizes="80px" className="object-cover" unoptimized />
+              </div>
+            )}
           </div>
           <div>
             <label className="text-[9px] uppercase tracking-[1.5px] text-text-muted block mb-1">Kategori</label>
-            <select
-              value={prodCategory}
-              onChange={(e) => setProdCategory(e.target.value)}
-              className="w-full bg-bg-primary border border-border/80 text-text-heading focus:outline-none focus:border-rose rounded-[2px] px-3 py-2 text-[13px] transition-all duration-300"
-            >
-              <option value="">Pilih kategori</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
+            {categories.length === 0 ? (
+              <div className="text-[11px] text-text-muted text-center py-3 border border-dashed border-border/80 rounded-[2px]">
+                Belum ada kategori.&nbsp;
+                <button onClick={() => { setShowProductModal(false); setTab('categories'); setShowCatModal(true) }}
+                  className="text-rose hover:text-text-rose underline">
+                  Buat kategori sekarang
+                </button>
+              </div>
+            ) : (
+              <select
+                value={prodCategory}
+                onChange={(e) => setProdCategory(e.target.value)}
+                className="w-full bg-bg-primary border border-border/80 text-text-heading focus:outline-none focus:border-rose rounded-[2px] px-3 py-2 text-[13px] transition-all duration-300"
+              >
+                <option value="">Pilih kategori</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            )}
           </div>
           <label className="flex items-center gap-2 text-[11px] text-text-body cursor-pointer">
             <input type="checkbox" checked={prodActive} onChange={(e) => setProdActive(e.target.checked)} className="accent-rose" />
             Produk Aktif
           </label>
+          {prodError && (
+            <p className="text-[11px] text-danger">{prodError}</p>
+          )}
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <Button size="sm" className="w-full" onClick={async () => {
+              setProdError('')
+              if (!prodName.trim() || !prodSlug.trim()) {
+                setProdError('Nama dan slug harus diisi')
+                return
+              }
+              const price = parseFloat(prodPrice)
+              const stock = parseInt(prodStock) || 0
+              if (isNaN(price) || price <= 0) {
+                setProdError('Harga harus diisi dengan angka positif')
+                return
+              }
+              if (!prodCategory) {
+                setProdError('Pilih kategori terlebih dahulu')
+                return
+              }
               const body = {
                 name: prodName, slug: prodSlug, description: prodDesc,
-                price: parseFloat(prodPrice), stock: parseInt(prodStock),
+                price, stock,
                 imageUrl: prodImage || undefined, categoryId: prodCategory,
                 isActive: prodActive,
               }
-              if (editingProduct) {
-                await fetch(`/api/products/${editingProduct.id}`, {
-                  method: 'PUT',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(body),
-                })
-              } else {
-                await fetch('/api/products', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(body),
-                })
+              try {
+                let res
+                if (editingProduct) {
+                  res = await fetch(`/api/products/${editingProduct.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                  })
+                } else {
+                  res = await fetch('/api/products', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                  })
+                }
+                if (!res.ok) {
+                  const err = await res.json()
+                  setProdError(err.error ? (typeof err.error === 'string' ? err.error : 'Validasi gagal: periksa input') : 'Gagal menyimpan produk')
+                  return
+                }
+                setShowProductModal(false)
+                fetchData()
+              } catch {
+                setProdError('Terjadi kesalahan server')
               }
-              setShowProductModal(false)
-              fetchData()
             }}>
               {editingProduct ? 'Simpan Perubahan' : 'Tambah Produk'}
             </Button>

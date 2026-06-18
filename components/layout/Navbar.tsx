@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Search, ShoppingBag, User, LogOut, Menu, X, Moon, Sun } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { useSession, signOut } from 'next-auth/react'
@@ -9,6 +10,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from '@/components/theme/ThemeProvider'
 
 export function Navbar() {
+  const pathname = usePathname()
+  if (pathname.startsWith('/admin')) return null
+
   const { data: session } = useSession()
   const { theme, toggle } = useTheme()
   const totalItems = useCart((s) => s.totalItems())

@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronLeft, ShoppingBag } from 'lucide-react'
+import { ChevronLeft, ShoppingBag, Printer } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/Button'
 import { formatRupiah, formatDate } from '@/lib/utils'
@@ -47,6 +47,7 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
+  const [showReceipt, setShowReceipt] = useState(false)
 
   useEffect(() => {
     if (!session) { router.push('/login'); return }
@@ -135,7 +136,7 @@ export default function OrderDetailPage() {
             >
               <div className="relative w-14 h-14 shrink-0 bg-bg-card overflow-hidden rounded-[2px]">
                 {item.product.imageUrl ? (
-                  <Image src={item.product.imageUrl} alt={item.product.name} fill sizes="56px" className="object-cover" />
+                  <Image src={item.product.imageUrl} alt={item.product.name} fill sizes="56px" className="object-cover" unoptimized />
                 ) : (
                   <div className="flex items-center justify-center h-full text-[9px] text-text-muted">No Img</div>
                 )}
@@ -150,18 +151,25 @@ export default function OrderDetailPage() {
         </div>
       </AnimatedSection>
 
-      <div className="flex justify-between items-center mb-8">
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <Button variant="outline" size="sm" className="flex items-center gap-2" onClick={() => {
-            order.items.forEach((i) => addItem(
-              { productId: i.product.id, name: i.product.name, price: i.product.price, imageUrl: i.product.imageUrl, stock: 999 },
-              i.quantity,
-            ))
-            router.push('/cart')
-          }}>
-            <ShoppingBag size={12} /> Beli Lagi
-          </Button>
-        </motion.div>
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex gap-2">
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button variant="outline" size="sm" className="flex items-center gap-2" onClick={() => {
+              order.items.forEach((i) => addItem(
+                { productId: i.product.id, name: i.product.name, price: i.product.price, imageUrl: i.product.imageUrl, stock: 999 },
+                i.quantity,
+              ))
+              router.push('/cart')
+            }}>
+              <ShoppingBag size={12} /> Beli Lagi
+            </Button>
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button variant="outline" size="sm" className="flex items-center gap-2" onClick={() => setShowReceipt(true)}>
+              <Printer size={12} /> Cetak Struk
+            </Button>
+          </motion.div>
+        </div>
         <p className="text-text-rose text-[22px] font-heading">
           Total: <span className="font-semibold">{formatRupiah(order.totalAmount)}</span>
         </p>
@@ -191,6 +199,92 @@ export default function OrderDetailPage() {
             </div>
           </div>
         </AnimatedSection>
+      )}
+
+      {showReceipt && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 print:items-start print:p-6 print:bg-white"
+        >
+          <div className="absolute inset-0 bg-black/70 print:hidden" onClick={() => setShowReceipt(false)} />
+          <motion.div
+            initial={{ scale: 0.95 }}
+            animate={{ scale: 1 }}
+            className="relative w-full max-w-sm bg-bg-card print:bg-white border-[0.5px] border-white/10 print:border-none"
+          >
+            <div className="p-6 print:p-4">
+              <div className="text-center mb-3">
+                <h2 className="font-heading text-text-heading print:text-black text-lg">Brownies</h2>
+                <p className="text-[8px] uppercase tracking-[2px] text-text-muted print:text-gray-600 mt-1">Struk Belanja</p>
+              </div>
+
+              <div className="border-t border-dashed border-white/20 print:border-gray-300 mb-3" />
+
+              <div className="text-[10px] text-text-body print:text-gray-700 space-y-0.5 mb-3">
+                <p>#ORD-{order.id.slice(0, 6).toUpperCase()}</p>
+                <p>{new Date(order.createdAt).toLocaleString('id-ID')}</p>
+              </div>
+
+              <div className="border-t border-dashed border-white/20 print:border-gray-300 mb-3" />
+
+              <div className="space-y-2 mb-3">
+                {order.items.map((item) => (
+                  <div key={item.id} className="flex justify-between gap-4">
+                    <div className="flex-1 text-[11px]">
+                      <p className="text-text-heading print:text-black">{item.product.name}</p>
+                      <p className="text-[9px] text-text-muted print:text-gray-500">
+                        {item.quantity} &times; {formatRupiah(item.price)}
+                      </p>
+                    </div>
+                    <p className="text-[11px] text-text-heading print:text-black whitespace-nowrap">
+                      {formatRupiah(item.price * item.quantity)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="border-t border-dashed border-white/20 print:border-gray-300 mb-3" />
+
+              <div className="space-y-1 mb-3">
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-text-muted print:text-gray-500">Subtotal</span>
+                  <span className="text-text-body print:text-gray-700">{formatRupiah(order.totalAmount)}</span>
+                </div>
+                <div className="flex justify-between text-[13px] font-medium">
+                  <span className="text-text-heading print:text-black">Total</span>
+                  <span className="text-text-rose print:text-black">{formatRupiah(order.totalAmount)}</span>
+                </div>
+              </div>
+
+              <div className="border-t border-dashed border-white/20 print:border-gray-300 mb-3" />
+
+              <div className="text-[9px] text-text-muted print:text-gray-500 text-center space-y-0.5 mb-3">
+                <p className="uppercase tracking-[1px]">
+                  {order.paymentMethod === 'transfer' ? 'Transfer Bank' : 'COD'} &mdash; {order.paymentStatus}
+                </p>
+                <p>{order.shippingAddress}</p>
+              </div>
+
+              <div className="border-t border-dashed border-white/20 print:border-gray-300 mb-3" />
+
+              <p className="text-[9px] text-text-muted print:text-gray-500 text-center">
+                Terima kasih telah berbelanja!
+              </p>
+            </div>
+
+            <div className="flex gap-2 p-4 pt-0 print:hidden">
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex-1">
+                <Button variant="primary" size="sm" className="w-full flex items-center gap-2 justify-center" onClick={() => window.print()}>
+                  <Printer size={12} /> Cetak
+                </Button>
+              </motion.div>
+              <Button variant="outline" size="sm" onClick={() => setShowReceipt(false)}>
+                Tutup
+              </Button>
+            </div>
+          </motion.div>
+        </motion.div>
       )}
     </div>
   )

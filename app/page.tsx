@@ -16,9 +16,9 @@ const articles = [
 
 const categories = [
   { name: 'All Brownies', href: '/products', count: '12+ varian' },
-  { name: 'Classic', href: '/products?category=classic', count: 'Fudgy & Chewy' },
-  { name: 'Premium', href: '/products?category=premium', count: 'Topping Spesial' },
-  { name: 'Gift Box', href: '/products?category=gift-box', count: 'Hadiah Istimewa' },
+  { name: 'Classic', href: '/products', count: 'Fudgy & Chewy' },
+  { name: 'Premium', href: '/products', count: 'Topping Spesial' },
+  { name: 'Gift Box', href: '/products', count: 'Hadiah Istimewa' },
 ]
 
 export default function HomePage() {
@@ -108,7 +108,7 @@ export default function HomePage() {
               width={530}
               height={629}
               className="object-contain max-h-[90vh] w-auto h-auto"
-              priority
+              preload
             />
           </motion.div>
           <div className="absolute inset-0 bg-gradient-to-t from-[#1a0f0a]/60 via-transparent to-transparent pointer-events-none" />
@@ -221,7 +221,7 @@ export default function HomePage() {
                     <article className="bg-bg-card border border-border rounded-[4px] overflow-hidden">
                       <div className="relative aspect-square overflow-hidden bg-bg-primary">
                         {product.imageUrl ? (
-                          <Image src={product.imageUrl} alt={product.name} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-all duration-700 group-hover:scale-110" />
+                          <Image src={product.imageUrl} alt={product.name} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-all duration-700 group-hover:scale-110" unoptimized />
                         ) : (
                           <div className="flex items-center justify-center h-full text-[9px] text-text-muted">No Image</div>
                         )}
