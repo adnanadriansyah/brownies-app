@@ -11,7 +11,9 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { formatRupiah, formatDate } from '@/lib/utils'
 import { useCart } from '@/hooks/useCart'
-import { AnimatedSection, StaggerGrid, StaggerItem } from '@/components/ui/AnimatedSection'
+import { useWishlist, useSyncWishlist } from '@/hooks/useWishlist'
+import { useToast } from '@/components/ui/Toast/Toast'
+import { AnimatedSection } from '@/components/ui/AnimatedSection'
 
 interface Review {
   id: string
@@ -29,8 +31,40 @@ interface Product {
   price: number
   stock: number
   imageUrl: string | null
+  rating: number
+  reviewCount: number
+  isActive: boolean
   category: { id: string; name: string }
   reviews: Review[]
+  _count?: { reviews: number }
+}
+
+function ProductCard({ product }: { product: Product }) {
+  return (
+    <Link href={`/products/${product.id}`} className="group block card-hover">
+      <article className="bg-bg-card border border-border rounded-[4px] overflow-hidden">
+        <div className="relative aspect-square overflow-hidden bg-bg-primary">
+          {product.imageUrl ? (
+            <Image src={product.imageUrl} alt={product.name} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover transition-all duration-700 group-hover:scale-110" unoptimized />
+          ) : (
+            <div className="flex items-center justify-center h-full text-[9px] text-text-muted">No Image</div>
+          )}
+        </div>
+        <div className="p-3">
+          <h3 className="font-heading text-text-heading text-sm mb-1 group-hover:text-text-rose transition-colors truncate">
+            {product.name}
+          </h3>
+          <div className="flex items-center gap-1 mb-1">
+            <Star size={10} className="text-rose fill-[#c47a8a]" />
+            <span className="text-[9px] text-text-muted">
+              {product.rating > 0 ? product.rating.toFixed(1) : '-'} ({product.reviewCount || 0})
+            </span>
+          </div>
+          <p className="text-[16px] font-heading text-text-rose">{formatRupiah(product.price)}</p>
+        </div>
+      </article>
+    </Link>
+  )
 }
 
 export default function ProductDetailPage() {
@@ -38,21 +72,41 @@ export default function ProductDetailPage() {
   const router = useRouter()
   const { data: session } = useSession()
   const addItem = useCart((s) => s.addItem)
+  const isWishlisted = useWishlist((s) => s.isWishlisted)
+  const toggleWishlist = useWishlist((s) => s.toggleItem)
+  const toast = useToast((s) => s.addToast)
+
+  useSyncWishlist()
 
   const [product, setProduct] = useState<Product | null>(null)
+  const [related, setRelated] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [qty, setQty] = useState(1)
   const [rating, setRating] = useState(0)
   const [comment, setComment] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [wishlisted, setWishlisted] = useState(false)
   const [imgLoaded, setImgLoaded] = useState(false)
   const [addedToCart, setAddedToCart] = useState(false)
 
   useEffect(() => {
     fetch(`/api/products/${id}`)
       .then((r) => r.json())
-      .then((data) => { setProduct(data); setLoading(false) })
+      .then((productData) => {
+        setProduct(productData)
+        const catId = productData.category?.id || ''
+        if (catId) {
+          fetch(`/api/products?category=${catId}&limit=5&active=true`)
+            .then((r) => r.json())
+            .then((allData) => {
+              const relatedList = (allData.products || []).filter(
+                (p: Product) => p.id !== id
+              ).slice(0, 4)
+              setRelated(relatedList)
+            })
+            .catch(() => {})
+        }
+        setLoading(false)
+      })
       .catch(() => setLoading(false))
   }, [id])
 
@@ -129,6 +183,7 @@ export default function ProductDetailPage() {
       qty,
     )
     setAddedToCart(true)
+    toast('success', `${product.name} ditambahkan ke keranjang`)
     setTimeout(() => setAddedToCart(false), 2000)
   }
 
@@ -288,15 +343,19 @@ export default function ProductDetailPage() {
                 variant="outline"
                 size="lg"
                 className="w-full"
-                onClick={() => setWishlisted(!wishlisted)}
+                onClick={async () => {
+                  if (!session) { router.push('/login'); return }
+                  const added = await toggleWishlist(product.id)
+                  toast(added ? 'success' : 'info', added ? 'Ditambahkan ke wishlist' : 'Dihapus dari wishlist')
+                }}
               >
                 <motion.span
-                  animate={wishlisted ? { scale: [1, 1.3, 1] } : {}}
+                  animate={isWishlisted(product.id) ? { scale: [1, 1.3, 1] } : {}}
                   transition={{ duration: 0.3 }}
                 >
-                  <Heart size={12} className={wishlisted ? 'fill-rose' : ''} />
+                  <Heart size={12} className={isWishlisted(product.id) ? 'fill-rose' : ''} />
                 </motion.span>
-                {wishlisted ? 'Tersimpan' : 'Simpan ke Wishlist'}
+                {isWishlisted(product.id) ? 'Tersimpan' : 'Simpan ke Wishlist'}
               </Button>
             </motion.div>
           </div>
@@ -419,6 +478,26 @@ export default function ProductDetailPage() {
           ))}
         </div>
       </AnimatedSection>
+
+      {related.length > 0 && (
+        <AnimatedSection className="mt-16">
+          <h2 className="font-heading text-text-heading text-2xl mb-6">
+            Produk Terkait
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {related.map((p, i) => (
+              <motion.div
+                key={p.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.08, duration: 0.4 }}
+              >
+                <ProductCard product={p} />
+              </motion.div>
+            ))}
+          </div>
+        </AnimatedSection>
+      )}
     </div>
   )
 }

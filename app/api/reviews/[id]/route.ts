@@ -18,6 +18,22 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
+  const productId = review.productId
+
   await prisma.review.delete({ where: { id } })
+
+  const agg = await prisma.review.aggregate({
+    where: { productId },
+    _avg: { rating: true },
+    _count: true,
+  })
+  await prisma.product.update({
+    where: { id: productId },
+    data: {
+      rating: agg._avg.rating ?? 0,
+      reviewCount: agg._count,
+    },
+  })
+
   return NextResponse.json({ message: 'Review deleted' })
 }

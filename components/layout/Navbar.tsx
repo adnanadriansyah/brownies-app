@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search, ShoppingBag, User, LogOut, Menu, X, Moon, Sun } from 'lucide-react'
+import { Search, ShoppingBag, User, LogOut, Menu, X, Moon, Sun, Heart } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { useSession, signOut } from 'next-auth/react'
 import { useState, useEffect } from 'react'
@@ -11,20 +11,22 @@ import { useTheme } from '@/components/theme/ThemeProvider'
 
 export function Navbar() {
   const pathname = usePathname()
-  if (pathname.startsWith('/admin')) return null
-
   const { data: session } = useSession()
   const { theme, toggle } = useTheme()
   const totalItems = useCart((s) => s.totalItems())
+  const [mounted, setMounted] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
+  useEffect(() => { setMounted(true) }, [])
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  if (pathname.startsWith('/admin')) return null
 
   return (
     <header
@@ -109,22 +111,30 @@ export function Navbar() {
             <Search size={16} />
           </motion.button>
 
+          <Link href="/wishlist" className="text-text-body hover:text-text-rose transition-colors duration-200">
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <Heart size={16} />
+            </motion.div>
+          </Link>
+
           <Link href="/cart" className="relative text-text-body hover:text-text-rose transition-colors duration-200">
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <ShoppingBag size={16} />
             </motion.div>
-            <AnimatePresence>
-              {totalItems > 0 && (
-                <motion.span
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
-                  className="absolute -top-2 -right-2 bg-rose text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-mono"
-                >
-                  {totalItems > 9 ? '9+' : totalItems}
-                </motion.span>
-              )}
-            </AnimatePresence>
+            {mounted && (
+              <AnimatePresence>
+                {totalItems > 0 && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    className="absolute -top-2 -right-2 bg-rose text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-mono"
+                  >
+                    {totalItems > 9 ? '9+' : totalItems}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            )}
           </Link>
 
           {session ? (

@@ -4,6 +4,7 @@ import './globals.css'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { Providers } from './providers'
+import { ToastContainer } from '@/components/ui/Toast/Toast'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -37,6 +38,7 @@ export default function RootLayout({
           <Navbar />
           <main className="flex-1 flex flex-col">{children}</main>
           <Footer />
+          <ToastContainer />
         </Providers>
       </body>
     </html>

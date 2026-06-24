@@ -37,6 +37,20 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       data: { ...data, userId, productId: id },
       include: { user: { select: { id: true, name: true } } },
     })
+
+    const agg = await prisma.review.aggregate({
+      where: { productId: id },
+      _avg: { rating: true },
+      _count: true,
+    })
+    await prisma.product.update({
+      where: { id },
+      data: {
+        rating: agg._avg.rating ?? 0,
+        reviewCount: agg._count,
+      },
+    })
+
     return NextResponse.json(review, { status: 201 })
   } catch (err) {
     if (err instanceof z.ZodError) {

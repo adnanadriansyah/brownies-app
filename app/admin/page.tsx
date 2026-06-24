@@ -78,7 +78,7 @@ export default function AdminPage() {
     setLoading(true)
     try {
       const [pRes, oRes, cRes, iRes, uRes] = await Promise.all([
-        fetch('/api/products'),
+        fetch('/api/products?limit=200&active=all'),
         fetch('/api/orders?all=true'),
         fetch('/api/categories'),
         fetch('/api/images'),

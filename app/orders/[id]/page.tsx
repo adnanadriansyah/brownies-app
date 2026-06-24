@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
-import Link from 'next/link'
-import { ChevronLeft, ShoppingBag, Printer } from 'lucide-react'
+import { ChevronLeft, ShoppingBag, Printer, Copy, Building2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/Button'
 import { formatRupiah, formatDate } from '@/lib/utils'
+import { bankAccounts } from '@/lib/payment'
 import { useCart } from '@/hooks/useCart'
+import { useToast } from '@/components/ui/Toast/Toast'
 import { AnimatedSection } from '@/components/ui/AnimatedSection'
 
 interface OrderItem {
@@ -26,6 +27,8 @@ interface Order {
   shippingAddress: string
   paymentMethod: string
   paymentStatus: string
+  paymentProof: string | null
+  paidAt: string | null
   createdAt: string
   user: { id: string; name: string; email: string }
   items: OrderItem[]
@@ -44,10 +47,13 @@ export default function OrderDetailPage() {
   const router = useRouter()
   const { data: session } = useSession()
   const addItem = useCart((s) => s.addItem)
+  const toast = useToast((s) => s.addToast)
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
   const [showReceipt, setShowReceipt] = useState(false)
+  const [paymentProof, setPaymentProof] = useState('')
+  const [confirmingPayment, setConfirmingPayment] = useState(false)
 
   useEffect(() => {
     if (!session) { router.push('/login'); return }
@@ -57,16 +63,18 @@ export default function OrderDetailPage() {
       .catch(() => { setLoading(false); router.push('/orders') })
   }, [id, session, router])
 
-  async function updateStatus(status: string) {
+  async function updateStatus(status: string, paymentStatus?: string) {
     setUpdating(true)
+    const body: Record<string, string> = { status }
+    if (paymentStatus) body.paymentStatus = paymentStatus
     const res = await fetch(`/api/orders/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status }),
+      body: JSON.stringify(body),
     })
     if (res.ok) {
       const updated = await res.json()
-      setOrder((prev) => prev ? { ...prev, status: updated.status } : prev)
+      setOrder((prev) => prev ? { ...prev, status: updated.status, paymentStatus: updated.paymentStatus } : prev)
     }
     setUpdating(false)
   }
@@ -103,26 +111,154 @@ export default function OrderDetailPage() {
           <span className={`text-[9px] uppercase tracking-[2px] px-3 py-1.5 rounded-[1px] border-[0.5px] ${cfg.style}`}>
             {cfg.label}
           </span>
+          {order.status === 'PENDING' && session?.user?.id === order.user.id && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              disabled={updating}
+              onClick={async () => {
+                if (!confirm('Yakin ingin membatalkan pesanan ini?')) return
+                setUpdating(true)
+                const res = await fetch(`/api/orders/${id}`, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ status: 'CANCELLED' }),
+                })
+                if (res.ok) {
+                  const updated = await res.json()
+                  setOrder((prev) => prev ? { ...prev, status: updated.status } : prev)
+                }
+                setUpdating(false)
+              }}
+              className="text-[9px] uppercase tracking-[2px] text-danger border-[0.5px] border-danger/40 px-3 py-1.5 rounded-[2px] hover:bg-danger/10 transition-all duration-200"
+            >
+              {updating ? '...' : 'Batalkan Pesanan'}
+            </motion.button>
+          )}
         </div>
       </AnimatedSection>
 
       <div className="grid md:grid-cols-2 gap-4 mb-8">
-        {[
-          { label: 'Alamat Pengiriman', value: order.shippingAddress },
-          { label: 'Pembayaran', value: `${order.paymentMethod.charAt(0).toUpperCase() + order.paymentMethod.slice(1)} — ${order.paymentStatus}` },
-        ].map((info, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 + i * 0.1 }}
-            className="bg-bg-section p-4 rounded-[4px] border-[0.5px] border-white/10"
-          >
-            <h3 className="text-[9px] uppercase tracking-[2px] text-text-muted mb-2">{info.label}</h3>
-            <p className="text-[12px] text-text-body">{info.value}</p>
-          </motion.div>
-        ))}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-bg-section p-4 rounded-[4px] border-[0.5px] border-white/10"
+        >
+          <h3 className="text-[9px] uppercase tracking-[2px] text-text-muted mb-2">Alamat Pengiriman</h3>
+          <p className="text-[12px] text-text-body">{order.shippingAddress}</p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="bg-bg-section p-4 rounded-[4px] border-[0.5px] border-white/10"
+        >
+          <h3 className="text-[9px] uppercase tracking-[2px] text-text-muted mb-2">Pembayaran</h3>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[12px] text-text-body capitalize">{order.paymentMethod === 'transfer' ? 'Transfer Bank' : 'COD'}</span>
+            <span className={`text-[8px] uppercase tracking-[1px] px-2 py-0.5 rounded-[1px] ${
+              order.paymentStatus === 'PAID' ? 'bg-success/20 text-success' :
+              order.paymentStatus === 'REFUNDED' ? 'bg-warning/20 text-warning' :
+              'bg-[rgba(196,122,138,0.2)] text-text-rose'
+            }`}>
+              {order.paymentStatus === 'PAID' ? 'Lunas' : order.paymentStatus === 'REFUNDED' ? 'Dikembalikan' : 'Belum Dibayar'}
+            </span>
+          </div>
+          {order.paidAt && (
+            <p className="text-[9px] text-text-muted">Lunas pada {formatDate(order.paidAt)}</p>
+          )}
+          {order.paymentProof && (
+            <p className="text-[10px] text-text-muted mt-1">Ref: {order.paymentProof}</p>
+          )}
+        </motion.div>
       </div>
+
+      {order.paymentMethod === 'transfer' && order.paymentStatus === 'UNPAID' && order.user.id === session?.user?.id && (
+        <AnimatedSection>
+          <div className="bg-bg-section border border-rose/20 rounded-[4px] p-5 mb-6">
+            <h3 className="text-[11px] uppercase tracking-[2px] text-text-heading font-medium mb-3 flex items-center gap-2">
+              <Building2 size={14} className="text-rose" /> Konfirmasi Pembayaran
+            </h3>
+            <p className="text-[11px] text-text-muted mb-4">
+              Transfer ke salah satu rekening di bawah ini, lalu konfirmasi dengan mengisi nomor referensi transfer.
+            </p>
+
+            <div className="space-y-2 mb-5">
+              {bankAccounts.map((acc) => {
+                const displayText = `${acc.bank} ${acc.accountNumber} a.n. ${acc.name}`
+                return (
+                  <div key={acc.bank} className="flex items-center justify-between bg-bg-primary border border-border/60 rounded-[2px] px-3 py-2.5 group">
+                    <div>
+                      <p className="text-[13px] font-medium text-text-heading">{acc.bank}</p>
+                      <p className="text-[12px] text-text-body font-mono">{acc.accountNumber}</p>
+                      <p className="text-[9px] text-text-muted">{acc.name}</p>
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => {
+                        navigator.clipboard.writeText(displayText)
+                        toast('success', 'Disalin!')
+                      }}
+                      className="text-text-muted hover:text-text-rose transition-colors opacity-0 group-hover:opacity-100"
+                      title="Salin"
+                    >
+                      <Copy size={14} />
+                    </motion.button>
+                  </div>
+                )
+              })}
+            </div>
+
+            <p className="text-[10px] uppercase tracking-[1.5px] text-text-muted mb-2">Nomor Referensi Transfer</p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Masukkan nomor referensi..."
+                value={paymentProof}
+                onChange={(e) => setPaymentProof(e.target.value)}
+                className="flex-1 bg-bg-primary border border-border/80 text-text-heading placeholder-text-muted focus:outline-none focus:border-rose rounded-[2px] px-3 py-2 text-[13px] transition-all duration-300"
+              />
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button
+                  size="sm"
+                  onClick={async () => {
+                    if (!paymentProof.trim()) {
+                      toast('error', 'Masukkan nomor referensi transfer')
+                      return
+                    }
+                    setConfirmingPayment(true)
+                    try {
+                      const res = await fetch(`/api/orders/${id}/pay`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ paymentProof: paymentProof.trim() }),
+                      })
+                      if (res.ok) {
+                        const updated = await res.json()
+                        setOrder((prev) => prev ? { ...prev, paymentStatus: updated.paymentStatus, paymentProof: updated.paymentProof, paidAt: updated.paidAt } : prev)
+                        toast('success', 'Pembayaran berhasil dikonfirmasi!')
+                        setPaymentProof('')
+                      } else {
+                        const err = await res.json()
+                        toast('error', err.error || 'Gagal konfirmasi pembayaran')
+                      }
+                    } catch {
+                      toast('error', 'Terjadi kesalahan')
+                    }
+                    setConfirmingPayment(false)
+                  }}
+                  disabled={confirmingPayment}
+                >
+                  {confirmingPayment ? '...' : 'Konfirmasi'}
+                </Button>
+              </motion.div>
+            </div>
+          </div>
+        </AnimatedSection>
+      )}
 
       <AnimatedSection delay={0.2}>
         <div className="space-y-3 mb-6">
@@ -177,25 +313,52 @@ export default function OrderDetailPage() {
 
       {session?.user?.role === 'ADMIN' && (
         <AnimatedSection>
-          <div className="bg-bg-section p-4 rounded-[4px] border-[0.5px] border-white/10">
-            <h3 className="text-[9px] uppercase tracking-[2px] text-text-muted mb-3">Update Status</h3>
-            <div className="flex flex-wrap gap-2">
-              {['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'].map((s) => (
-                <motion.button
-                  key={s}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  disabled={updating || order.status === s}
-                  onClick={() => updateStatus(s)}
-                  className={`text-[9px] uppercase tracking-[1.5px] px-3 py-1.5 rounded-[2px] transition-all duration-200 ${
-                    order.status === s
-                   ? 'bg-rose text-white'
-                  : 'border-[0.5px] border-border/80 text-text-body hover:text-text-heading hover:border-rose/50'
-                  }`}
-                >
-                  {s}
-                </motion.button>
-              ))}
+          <div className="bg-bg-section p-4 rounded-[4px] border-[0.5px] border-white/10 space-y-4">
+            <div>
+              <h3 className="text-[9px] uppercase tracking-[2px] text-text-muted mb-3">Update Status Pesanan</h3>
+              <div className="flex flex-wrap gap-2">
+                {['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'].map((s) => (
+                  <motion.button
+                    key={s}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    disabled={updating || order.status === s}
+                    onClick={() => updateStatus(s)}
+                    className={`text-[9px] uppercase tracking-[1.5px] px-3 py-1.5 rounded-[2px] transition-all duration-200 ${
+                      order.status === s
+                     ? 'bg-rose text-white'
+                    : 'border-[0.5px] border-border/80 text-text-body hover:text-text-heading hover:border-rose/50'
+                    }`}
+                  >
+                    {s}
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-[9px] uppercase tracking-[2px] text-text-muted mb-3">Status Pembayaran</h3>
+              <div className="flex flex-wrap gap-2">
+                {['UNPAID', 'PAID', 'REFUNDED'].map((s) => (
+                  <motion.button
+                    key={s}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    disabled={updating || order.paymentStatus === s}
+                    onClick={() => updateStatus(order.status, s)}
+                    className={`text-[9px] uppercase tracking-[1.5px] px-3 py-1.5 rounded-[2px] transition-all duration-200 ${
+                      order.paymentStatus === s
+                     ? 'bg-success text-white'
+                    : 'border-[0.5px] border-border/80 text-text-body hover:text-text-heading hover:border-success/50'
+                    }`}
+                  >
+                    {s}
+                  </motion.button>
+                ))}
+              </div>
+              {order.paymentProof && (
+                <p className="text-[10px] text-text-muted mt-2">Ref: {order.paymentProof}</p>
+              )}
             </div>
           </div>
         </AnimatedSection>

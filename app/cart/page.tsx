@@ -12,6 +12,7 @@ import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
 import { formatRupiah } from '@/lib/utils'
+import { bankAccounts } from '@/lib/payment'
 import { useCart } from '@/hooks/useCart'
 import { AnimatedSection } from '@/components/ui/AnimatedSection'
 
@@ -291,6 +292,24 @@ export default function CartPage() {
                     </label>
                   ))}
                 </div>
+                {paymentMethod === 'transfer' && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    className="mt-3 space-y-2 overflow-hidden"
+                  >
+                    <p className="text-[9px] uppercase tracking-[1.5px] text-text-muted mb-2">Rekening Tujuan</p>
+                    {bankAccounts.map((acc) => (
+                      <div key={acc.bank} className="flex items-center justify-between bg-bg-primary border border-border/60 rounded-[2px] px-3 py-2 text-[12px]">
+                        <span className="font-medium text-text-heading">{acc.bank}</span>
+                        <div className="text-right">
+                          <p className="text-text-heading font-mono text-[13px]">{acc.accountNumber}</p>
+                          <p className="text-[9px] text-text-muted">{acc.name}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
               </div>
 
               <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
